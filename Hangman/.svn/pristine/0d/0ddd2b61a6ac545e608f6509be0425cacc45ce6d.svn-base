@@ -1,0 +1,14 @@
+package hangman.GUI;
+
+import java.awt.Dimension;
+import java.util.concurrent.TimeUnit;
+import javax.swing.*;
+
+/**
+ *
+ * @author P
+ */
+public class GameScreen extends JFrame{
+
+    public JLabel label;
+}

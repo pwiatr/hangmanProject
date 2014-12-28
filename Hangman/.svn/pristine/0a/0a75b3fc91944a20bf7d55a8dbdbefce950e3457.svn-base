@@ -1,0 +1,41 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package hangman.GUI;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
+
+/**
+ *
+ * @author P
+ */
+public class GameElements extends JComponent {
+    private JButton 
+            b1= new JButton("But1"), 
+            b2= new JButton("But2");
+    private JLabel
+            lName = new JLabel("Hangman");
+    
+    private ActionListener bl = new ActionListener() {
+        public void actionPerformed(ActionEvent e){
+            String name = ((JButton)e.getSource()).getText();
+            lName.setText(name);
+        }
+    };
+
+
+    public GameElements(){
+        setLayout(new FlowLayout());
+        b1.addActionListener(bl);
+        b2.addActionListener(bl);
+        add(b1);
+        add(b2);
+        add(lName);
+    }
+}
+
