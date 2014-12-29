@@ -6,6 +6,8 @@
 package hangman.GUI;
 
 import java.awt.BorderLayout;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -90,13 +92,13 @@ public class GameScoresPanel extends javax.swing.JPanel {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run(){
-               GameMainMenuPanel GMMP = new GameMainMenuPanel();
+                 GameMainMenuPanel GMMP = new GameMainMenuPanel();
 
-                removeAll();
-                setLayout(new BorderLayout());
-                add(GMMP);
-                validate();
-                repaint();
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(GameScoresPanel.this);
+                topFrame.getContentPane().removeAll();
+                topFrame.add(GMMP);
+                topFrame.validate();
+                topFrame.repaint();
             }
         });
     }//GEN-LAST:event_jButton2ActionPerformed

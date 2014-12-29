@@ -27,7 +27,7 @@ public class WordList {
     }
     
     /**
-     * Adds a single/many Word objects to a WordList object.
+     * Adds a single/many Word object(s) to a WordList object.
      * @param aWords One/multiple Word objects.
      * @return True if added any word, false otherwise.
      */
@@ -41,7 +41,11 @@ public class WordList {
         return added;
     }
     
-    public int checkGuessed(){
+    /**
+     * Checks the amount of guessed words.
+     * @return Integer number of guessed words amount.
+     */
+    public int checkGuessedAmount(){
         int guessed = 0;
         
         for(Word aWord: words){
@@ -52,10 +56,19 @@ public class WordList {
         return guessed;
     }
     
+    /**
+     * The amount of words in a WordList.
+     * @return Integer number of words in WordList.
+     */
     public int getAmount(){
         return this.wordsAmount;
     }
     
+     /**
+     * Gets a word on specified index.
+     * @param index The index of a word on a list.
+     * @return Particular word as Word object, otherwise null.
+     */
     public Word getWord(int index){
         if(index<this.wordsAmount){
             return words.get(index);
@@ -66,6 +79,11 @@ public class WordList {
         }
     }
     
+    /**
+     * Gets a word name at specified index.
+     * @param index The index of a word on a list.
+     * @return String representation of a word name, otherwise null.
+     */
     public String getWordName(int index){
         if(index<this.wordsAmount){
             return words.get(index).getWord();

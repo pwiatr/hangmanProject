@@ -54,7 +54,7 @@ public class Word {
       * Checks whether a word has been guessed.
       * @return True for a guessed word, false otherwise.
       */
-     public boolean checkWord(){
+     private boolean checkWord(){
          for(boolean letter : this.guessedIndexes){
              if(letter == false)
                  return false;

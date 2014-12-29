@@ -7,6 +7,7 @@ package hangman.GUI;
 
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.SwingUtilities;
 
 /**
@@ -176,8 +177,15 @@ public class GameMainMenuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-//        this.dispose();
-//        System.exit(EXIT_ON_CLOSE);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run(){
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(GameMainMenuPanel.this);
+                topFrame.dispose();
+                System.exit(EXIT_ON_CLOSE);
+            }
+        });
+
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
 
