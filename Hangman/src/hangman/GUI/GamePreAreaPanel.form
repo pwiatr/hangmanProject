@@ -44,24 +44,29 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
+                              <Component id="levelSlider" min="-2" pref="300" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="categoryLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Component id="player1Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="player2Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
                                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="categoryCombo" alignment="0" min="-2" pref="153" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="categoryCombo" alignment="0" max="32767" attributes="0"/>
                                           <Component id="typePvpRadio" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="typeMultipleRadio" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="typeSingleRadio" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="playerName1" alignment="0" pref="153" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
+                                  <Component id="playerName2" alignment="1" min="-2" pref="153" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="189" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="levelSlider" min="-2" pref="300" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -81,6 +86,12 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <Component id="graphicPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="playButton" pref="97" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="levelLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="levelSlider" min="-2" max="-2" attributes="0"/>
@@ -96,12 +107,17 @@
                       <Component id="categoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="categoryCombo" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="player1Label" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="playerName1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                      <Component id="player2Label" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="playerName2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
-                  <Component id="graphicPanel" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="playButton" pref="97" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -208,9 +224,6 @@
         <Property name="text" type="java.lang.String" value="Player VS Player"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
-      <Events>
-        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="typePvpRadioMouseEntered"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="typeMultipleRadio">
       <Properties>
@@ -234,13 +247,7 @@
     <Component class="javax.swing.JComboBox" name="categoryCombo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="5">
-            <StringItem index="0" value="Random"/>
-            <StringItem index="1" value="Animals"/>
-            <StringItem index="2" value="Food"/>
-            <StringItem index="3" value="Cars"/>
-            <StringItem index="4" value="Travel"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
     </Component>
@@ -276,5 +283,31 @@
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="player1Label">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Microsoft YaHei" size="14" style="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Write your name:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="player2Label">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Microsoft YaHei" size="14" style="0"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Write 2nd player name:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="playerName1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Hang On!"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="playerName2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Hang On!"/>
+      </Properties>
+    </Component>
   </SubComponents>
 </Form>

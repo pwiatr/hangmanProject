@@ -6,6 +6,7 @@
 package hangman.GUI;
 
 import java.awt.Color;
+import javax.swing.JFrame;
 
 /**
  *
@@ -13,19 +14,16 @@ import java.awt.Color;
  */
 public class GamePopup extends javax.swing.JFrame {
 
-    /**
-     * Creates new form GamePopup
-     */
-    public GamePopup() {
-        initComponents();
-        this.getContentPane().setBackground(Color.WHITE);
-    }
+    private final GameAreaPanel callee;
     
-    public GamePopup(String text){
+    public GamePopup(GameAreaPanel mainWindow){
         initComponents();
-        informationLabel.setText(text);
+        this.setVisible(false);
+        setText("");
+        this.getContentPane().setBackground(Color.WHITE);
         this.setLocation(GameDetails.gamePopupLocationW-this.getWidth()/2,
                          GameDetails.gamePopupLocationH);
+        callee = mainWindow;
     }
 
     /**
@@ -110,9 +108,21 @@ public class GamePopup extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void setText(String text){
+        informationLabel.setText(text);
+    }
+    
+    public void showPopup(String text){
+        this.setVisible(true);
+         this.setLocation(GameDetails.gamePopupLocationW-this.getWidth()/2,
+                         GameDetails.gamePopupLocationH);
+         setText(text);
+    }
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        GamePopup.this.setVisible(false);
-        this.dispose();
+        this.setVisible(false);
+        if(!callee.gLogic.isGameFinished)
+            callee.continueGame();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -145,7 +155,7 @@ public class GamePopup extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GamePopup().setVisible(true);
+               
             }
         });
     }

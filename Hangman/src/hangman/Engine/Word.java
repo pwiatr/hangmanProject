@@ -59,12 +59,11 @@ public class Word {
              if(letter == false)
                  return false;
          }
-         this.guessed = true;
-         return true;
+         return this.guessed = true;
      }
      
      /**
-      * Sets word variable to a given value
+      * Sets trimmed word variable to a given value
       * @param value A walue that will be set to a word.
       */
     private void setWord(String value){

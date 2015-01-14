@@ -6,6 +6,9 @@
 package hangman.GUI;
 
 import hangman.Engine.GameLogic;
+import hangman.Engine.GameLogic.GameDifficulty;
+import hangman.Engine.GameLogic.GameType;
+import hangman.Engine.GameLogic.HangmanChange;
 import hangman.Engine.Word;
 import hangman.Engine.WordList;
 import java.awt.Color;
@@ -20,7 +23,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
-
 /**
  *
  * @author P
@@ -28,7 +30,7 @@ import javax.swing.SwingUtilities;
 public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
     GameLogic gLogic = new GameLogic();
-    
+    GamePopup gamePopup = new GamePopup(this);
 
     private ArrayList<javax.swing.JLabel> charLabels;
 
@@ -45,8 +47,6 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
         }
 
     }
-
-    private char wChar[];
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -83,8 +83,6 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
     }
 
-  
-
     /**
      * Creates new form GameAreaPanel
      */
@@ -101,15 +99,14 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
                 GameAreaPanel.this.requestFocus();
             }
         });
-        
-        gLogic.NewGame(GameLogic.GameType.SINGLE);
-        gameRenderLogic();
 
+        gLogic.NewGame();
+        gameRenderLogic();
     }
 
-    private boolean isFieldShown = false;
     /**
      * Shows all letters as a JLabel objects on screen.
+     *
      * @param wordList WordList objects with words used in game.
      * @param wordIndex Index of particular word in WordList
      * @return True if everything went well.
@@ -136,85 +133,131 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
         });
 
         gLogic.changeHangman(GameLogic.HangmanChange.RESET);
+        changeHangman();
         changeKeyboardMode(true);
         this.requestFocus();
 
-        
         return true;
     }
 
     /**
      * Shows a popup with text.
-     * @param text Given text.
+     *
+     * @param text Text to show in popup.
      */
     public void showPopup(String text) {
-        GamePopup gamePopup = new GamePopup(text);
-        gamePopup.setVisible(true);
+        gamePopup.showPopup(text);
     }
 
+    private void gameRenderLogic() {
+        if (!gLogic.isFieldShown) { // Showing a new word field
+            showWordField(gLogic.wordList, gLogic.wordIndex);
+            gLogic.isFieldShown = true;
+        } else { // Gameplay logic
+            for (Integer e : gLogic.wordCharIndexes) { // Setting char labels to a guessed letter
+                int i = (int) e;
+                charLabels.get(i).setText(String.valueOf(gLogic.wordChar[i]));
+            }
 
+            gLogic.checkGuessResult();
 
+            switch (gLogic.hangmanChange) {
+                case FAIL: {
+                    loseWord();
+                    break;
+                }
+                case GUESS: {
+                    winWord();
+                    break;
+                }
+                case WINGAME: {
+                    showPopup("Wygrałeś!");
+                    break;
+                }
+            }
 
-    public void gameRenderLogic(){
-        if(!isFieldShown) {
-            showWordField(gLogic.wordList,gLogic.wordIndex);
-            isFieldShown = true;
         }
-        
-        for(Integer e : gLogic.indexes){
-            int i = (int) e;
-            charLabels.get(i).setText(String.valueOf(gLogic.wordChar[i]));
-        }
-        
-      
-        GameLogic.HangmanChange result = gLogic.checkLetterResult();
-        if(result != GameLogic.HangmanChange.FAIL)
-            changeHangman(gLogic.actualHangmanChange,gLogic.hangingTime);
-        else
-            loseGame();
     }
-    
+
     /**
-     * Changes the hangman picture and the level of hanging .
-     * @param hC Enumeration HangmanChange - INCREASE or RESET or FAIL.
+     * Changes the hangman picture to the level of hanging.
      */
-    private void changeHangman(int changeNumber, int hangingTime){
+    private void changeHangman() {
 
-        switch(changeNumber){
-            case 0:
-            {
+        int hangingTime = gLogic.hangingTime;
+        HangmanChange hChange = gLogic.hangmanChange;
+
+        switch (hChange) {
+            case WORSEN: {
                 hangingMan.setIcon(new ImageIcon(getClass().getResource("/Resources/" + hangingTime + ".jpg")));
                 break;
             }
-            case 1:
-            {
-                 hangingMan.setIcon(new ImageIcon(getClass().getResource("/Resources/0.jpg"))); 
-                  break;
+            case RESET: {
+                hangingMan.setIcon(new ImageIcon(getClass().getResource("/Resources/0.jpg")));
+                break;
             }
-            case 2: 
-            {
-               hangingMan.setIcon(new ImageIcon(getClass().getResource("/Resources/12.jpg"))); 
+            case FAIL: {
+                hangingMan.setIcon(new ImageIcon(getClass().getResource("/Resources/12.jpg")));
+                break;
+            }
+            case GUESS: {
+                hangingMan.setIcon(new ImageIcon(getClass().getResource("/Resources/13.jpg")));
+            }
+            case NONE: {
                 break;
             }
         }
     }
-    
+
     /**
      * Changes the keyboard to enabled/disabled.
+     *
      * @param enable True - the keyboard gets enabled, false otherwise.
      */
     private void changeKeyboardMode(boolean enable) {
-
         Component comp[] = buttonPanel.getComponents();
         for (Component d : comp) {
             ((javax.swing.JButton) (d)).setEnabled(enable);
         }
-
     }
-    
-    private void loseGame(){
+
+    /**
+     * The behaviour when the word has not been guessed.
+     */
+    private void loseWord() {
         changeKeyboardMode(false);
-        showPopup("Przegrałeś!");
+        showPopup("Sorry, you didn't guess right.");
+        changeScore(gLogic.gameScore);
+        changeHangman();
+    }
+
+    /**
+     * The behaviour when the word has been guessed.
+     */
+    private void winWord() {
+        changeKeyboardMode(false);
+        showPopup("Yes, you guessed it!");
+        gLogic.players[0].raiseScore();
+        changeScore(gLogic.gameScore);
+        changeHangman();
+    }
+
+    public void continueGame() {
+        renderNewWord(gLogic.wordIndex + 1);
+    }
+
+    private void renderNewWord(int wordIndex) {
+        gLogic.outputNewWord(wordIndex);
+        gameRenderLogic();
+    }
+
+    private void changeScore(int value) {
+        scoreP1Label.setText("Score (" + gLogic.players[0].getScore() + ")");
+        if (gLogic.players[1] != null) {
+            scoreP2Label.setText("Score (" + gLogic.players[1].getScore() + ")");
+        } else {
+            scoreP2Label.setText("Good luck!");
+        }
     }
 
     /**
@@ -228,8 +271,8 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
         jPanel1 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        scoreLabel = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        scoreP1Label = new javax.swing.JLabel();
+        scoreP2Label = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         hangingMan = new javax.swing.JLabel();
@@ -291,26 +334,26 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jButton1MouseEntered(evt);
             }
-        });
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jButton1MousePressed(evt);
             }
         });
 
-        scoreLabel.setFont(new java.awt.Font("Microsoft YaHei", 0, 18)); // NOI18N
-        scoreLabel.setText("Score (0)");
-        scoreLabel.setToolTipText("");
-        scoreLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        scoreP1Label.setFont(new java.awt.Font("Microsoft YaHei", 0, 18)); // NOI18N
+        scoreP1Label.setText("Score - player 1 (0)");
+        scoreP1Label.setToolTipText("");
+        scoreP1Label.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                scoreLabelMouseEntered(evt);
+                scoreP1LabelMouseEntered(evt);
             }
         });
 
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+        scoreP2Label.setFont(new java.awt.Font("Microsoft YaHei", 0, 18)); // NOI18N
+        scoreP2Label.setText("Score - player 2 (0)");
+        scoreP2Label.setToolTipText("");
+        scoreP2Label.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                scoreP2LabelMouseEntered(evt);
             }
         });
 
@@ -321,10 +364,10 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(scoreLabel)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scoreP1Label, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(scoreP2Label, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -334,10 +377,9 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(scoreLabel)
-                            .addComponent(jButton2))
-                        .addGap(0, 37, Short.MAX_VALUE)))
+                        .addComponent(scoreP1Label)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                        .addComponent(scoreP2Label)))
                 .addContainerGap())
         );
 
@@ -898,11 +940,202 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    // <editor-fold defaultstate="collapsed" desc="Letter buttons Code">                          
+    private void AButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AButActionPerformed
+        gLogic.checkLetter('A', 'a', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_AButActionPerformed
+
+    private void AAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AAltButActionPerformed
+        gLogic.checkLetter('Ą', 'ą', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_AAltButActionPerformed
+
+    private void BButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BButActionPerformed
+        gLogic.checkLetter('B', 'b', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_BButActionPerformed
+
+    private void CButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CButActionPerformed
+        gLogic.checkLetter('C', 'c', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_CButActionPerformed
+
+    private void CAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CAltButActionPerformed
+        gLogic.checkLetter('Ć', 'ć', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_CAltButActionPerformed
+
+    private void DButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DButActionPerformed
+        gLogic.checkLetter('D', 'd', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_DButActionPerformed
+
+    private void EButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EButActionPerformed
+        gLogic.checkLetter('E', 'e', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_EButActionPerformed
+
+    private void EAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EAltButActionPerformed
+        gLogic.checkLetter('Ę', 'ę', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_EAltButActionPerformed
+
+    private void FButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FButActionPerformed
+        gLogic.checkLetter('F', 'f', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_FButActionPerformed
+
+    private void GButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GButActionPerformed
+        gLogic.checkLetter('G', 'g', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_GButActionPerformed
+
+    private void HButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HButActionPerformed
+        gLogic.checkLetter('H', 'h', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_HButActionPerformed
+
+    private void IButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IButActionPerformed
+        gLogic.checkLetter('I', 'i', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_IButActionPerformed
+
+    private void JButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButActionPerformed
+        gLogic.checkLetter('J', 'j', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_JButActionPerformed
+
+    private void KButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KButActionPerformed
+        gLogic.checkLetter('K', 'k', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_KButActionPerformed
+
+    private void LButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LButActionPerformed
+        gLogic.checkLetter('L', 'l', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_LButActionPerformed
+
+    private void LAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAltButActionPerformed
+        gLogic.checkLetter('Ł', 'ł', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_LAltButActionPerformed
+
+    private void MButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MButActionPerformed
+        gLogic.checkLetter('M', 'm', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_MButActionPerformed
+
+    private void NButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NButActionPerformed
+        gLogic.checkLetter('Ń', 'ń', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_NButActionPerformed
+
+    private void NAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NAltButActionPerformed
+        gLogic.checkLetter('N', 'n', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_NAltButActionPerformed
+
+    private void OButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OButActionPerformed
+        gLogic.checkLetter('O', 'o', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_OButActionPerformed
+
+    private void OAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OAltButActionPerformed
+        gLogic.checkLetter('Ó', 'ó', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_OAltButActionPerformed
+
+    private void PButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PButActionPerformed
+        gLogic.checkLetter('P', 'p', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_PButActionPerformed
+
+    private void QButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QButActionPerformed
+        gLogic.checkLetter('Q', 'q', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_QButActionPerformed
+
+    private void RButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RButActionPerformed
+        gLogic.checkLetter('R', 'r', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_RButActionPerformed
+
+    private void SButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SButActionPerformed
+        gLogic.checkLetter('S', 's', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_SButActionPerformed
+
+    private void SAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SAltButActionPerformed
+        gLogic.checkLetter('Ś', 'ś', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_SAltButActionPerformed
+
+    private void TButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TButActionPerformed
+        gLogic.checkLetter('T', 't', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_TButActionPerformed
+
+    private void UButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UButActionPerformed
+        gLogic.checkLetter('U', 'u', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_UButActionPerformed
+
+    private void WButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WButActionPerformed
+        gLogic.checkLetter('W', 'w', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_WButActionPerformed
+
+    private void VButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VButActionPerformed
+        gLogic.checkLetter('V', 'v', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_VButActionPerformed
+
+    private void YButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_YButActionPerformed
+        gLogic.checkLetter('Y', 'y', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_YButActionPerformed
+
+    private void XButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XButActionPerformed
+        gLogic.checkLetter('X', 'x', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_XButActionPerformed
+
+    private void ZButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZButActionPerformed
+        gLogic.checkLetter('Z', 'z', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_ZButActionPerformed
+
+    private void ZAltAButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZAltAButActionPerformed
+        gLogic.checkLetter('Ź', 'ź', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_ZAltAButActionPerformed
+
+    private void ZAltBButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZAltBButActionPerformed
+        gLogic.checkLetter('Ż', 'ż', (javax.swing.JButton) evt.getSource());
+        gameRenderLogic();
+    }//GEN-LAST:event_ZAltBButActionPerformed
+    // </editor-fold>   
+
+    // <editor-fold defaultstate="collapsed" desc="Status bar tips">                     
+    private void buttonPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonPanelMouseEntered
+        statusBarText.setText("Choose a letter (you can also use your keyboard).");
+    }//GEN-LAST:event_buttonPanelMouseEntered
+
+    private void wordAreaPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_wordAreaPanelMouseEntered
+        statusBarText.setText("Here you can see the word you are guessing.");
+    }//GEN-LAST:event_wordAreaPanelMouseEntered
+
     private void jButton1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseEntered
-        statusBarText.setText("Stop the game and return to menu.");
+        statusBarText.setText("Exit to main menu.");
     }//GEN-LAST:event_jButton1MouseEntered
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void scoreP1LabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scoreP1LabelMouseEntered
+        statusBarText.setText("The score you gained throughout the game.");
+    }//GEN-LAST:event_scoreP1LabelMouseEntered
+    // </editor-fold>
+
+    private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 GameMainMenuPanel GMMP = new GameMainMenuPanel();
@@ -915,169 +1148,11 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
             }
         });
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButton1MousePressed
 
-    private void scoreLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scoreLabelMouseEntered
-        statusBarText.setText("The score you gained throughout the game.");      // TODO add your handling code here:
-    }//GEN-LAST:event_scoreLabelMouseEntered
-
-    // <editor-fold defaultstate="collapsed" desc="Letter buttons Code">                          
-    private void AButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AButActionPerformed
-        gLogic.checkLetter('A', 'a', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_AButActionPerformed
-
-    private void AAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AAltButActionPerformed
-        gLogic.checkLetter('Ą', 'ą', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_AAltButActionPerformed
-
-    private void BButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BButActionPerformed
-        gLogic.checkLetter('B', 'b', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_BButActionPerformed
-
-    private void CButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CButActionPerformed
-        gLogic.checkLetter('C', 'c', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_CButActionPerformed
-
-    private void CAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CAltButActionPerformed
-        gLogic.checkLetter('Ć', 'ć', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_CAltButActionPerformed
-
-    private void DButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DButActionPerformed
-        gLogic.checkLetter('D', 'd', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_DButActionPerformed
-
-    private void EButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EButActionPerformed
-        gLogic.checkLetter('E', 'e', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_EButActionPerformed
-
-    private void EAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EAltButActionPerformed
-        gLogic.checkLetter('Ę', 'ę', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_EAltButActionPerformed
-
-    private void FButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FButActionPerformed
-        gLogic.checkLetter('F', 'f', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_FButActionPerformed
-
-    private void GButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GButActionPerformed
-        gLogic.checkLetter('G', 'g', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_GButActionPerformed
-
-    private void HButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HButActionPerformed
-        gLogic.checkLetter('H', 'h', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_HButActionPerformed
-
-    private void IButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IButActionPerformed
-        gLogic.checkLetter('I', 'i', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_IButActionPerformed
-
-    private void JButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButActionPerformed
-        gLogic.checkLetter('J', 'j', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_JButActionPerformed
-
-    private void KButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_KButActionPerformed
-        gLogic.checkLetter('K', 'k', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_KButActionPerformed
-
-    private void LButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LButActionPerformed
-        gLogic.checkLetter('L', 'l', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_LButActionPerformed
-
-    private void LAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LAltButActionPerformed
-        gLogic.checkLetter('Ł', 'ł', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_LAltButActionPerformed
-
-    private void MButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MButActionPerformed
-        gLogic.checkLetter('M', 'm', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_MButActionPerformed
-
-    private void NButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NButActionPerformed
-        gLogic.checkLetter('Ń', 'ń', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_NButActionPerformed
-
-    private void NAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NAltButActionPerformed
-        gLogic.checkLetter('N', 'n', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_NAltButActionPerformed
-
-    private void OButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OButActionPerformed
-        gLogic.checkLetter('O', 'o', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_OButActionPerformed
-
-    private void OAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OAltButActionPerformed
-        gLogic.checkLetter('Ó', 'ó', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_OAltButActionPerformed
-
-    private void PButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PButActionPerformed
-        gLogic.checkLetter('P', 'p', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_PButActionPerformed
-
-    private void QButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QButActionPerformed
-        gLogic.checkLetter('Q', 'q', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_QButActionPerformed
-
-    private void RButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RButActionPerformed
-        gLogic.checkLetter('R', 'r', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_RButActionPerformed
-
-    private void SButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SButActionPerformed
-        gLogic.checkLetter('S', 's', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_SButActionPerformed
-
-    private void SAltButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SAltButActionPerformed
-        gLogic.checkLetter('Ś', 'ś', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_SAltButActionPerformed
-
-    private void TButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TButActionPerformed
-        gLogic.checkLetter('T', 't', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_TButActionPerformed
-
-    private void UButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UButActionPerformed
-        gLogic.checkLetter('U', 'u', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_UButActionPerformed
-
-    private void WButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_WButActionPerformed
-        gLogic.checkLetter('W', 'w', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_WButActionPerformed
-
-    private void VButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VButActionPerformed
-        gLogic.checkLetter('V', 'v', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_VButActionPerformed
-
-    private void YButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_YButActionPerformed
-        gLogic.checkLetter('Y', 'y', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_YButActionPerformed
-
-    private void XButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XButActionPerformed
-        gLogic.checkLetter('X', 'x', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_XButActionPerformed
-
-    private void ZButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZButActionPerformed
-        gLogic.checkLetter('Z', 'z', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_ZButActionPerformed
-
-    private void ZAltAButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZAltAButActionPerformed
-        gLogic.checkLetter('Ź', 'ź', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_ZAltAButActionPerformed
-
-    private void ZAltBButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ZAltBButActionPerformed
-        gLogic.checkLetter('Ż', 'ż', (javax.swing.JButton) evt.getSource()); gameRenderLogic();
-    }//GEN-LAST:event_ZAltBButActionPerformed
-    // </editor-fold>   
-
-    private void buttonPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonPanelMouseEntered
-        statusBarText.setText("Choose a letter (you can also use your keyboard).");
-    }//GEN-LAST:event_buttonPanelMouseEntered
-
-    private void wordAreaPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_wordAreaPanelMouseEntered
-        statusBarText.setText("Here you can see the word you are guessing.");
-    }//GEN-LAST:event_wordAreaPanelMouseEntered
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Word w[] = {new Word("AUTOBUS"), new Word("Słowob")};
-        WordList words = new WordList();
-        words.addWords(w);
-
-        showWordField(words, 1);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void scoreP2LabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scoreP2LabelMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_scoreP2LabelMouseEntered
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1119,11 +1194,11 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JLabel hangingMan;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel scoreLabel;
+    private javax.swing.JLabel scoreP1Label;
+    private javax.swing.JLabel scoreP2Label;
     private javax.swing.JPanel statusBar;
     private javax.swing.JLabel statusBarText;
     private javax.swing.JPanel wordAreaPanel;
