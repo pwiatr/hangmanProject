@@ -5,7 +5,11 @@
  */
 package hangman.Engine;
 
-import static hangman.Engine.GameLogic.HangmanChange.*;
+import Word.WordList;
+import Word.Word;
+import GameDifficulty.GameDifficulty;
+import GameType.GameType;
+import static hangman.Engine.GameLogic.GameStatus.*;
 import java.util.ArrayList;
 import javax.swing.JButton;
 
@@ -15,296 +19,300 @@ import javax.swing.JButton;
  */
 public class GameLogic {
 
-    public enum HangmanChange {
+    public enum GameStatus {
 
+        /**
+         * Wrong guess, mark an error.
+         */
         WORSEN,
+        /**
+         * Totally reset the game (guess counter, points, eveyrhting).
+         */
         RESET,
+        /**
+         * Lost game - the word has not been guessed.
+         */
         FAIL,
+        /**
+         * The word has been guessed.
+         */
         GUESS,
+        /**
+         * The game has been won.
+         */
         WINGAME,
+        /**
+         * Someone lost the game.
+         */
         LOSEGAME,
+        /**
+         * Only PVP - the players guessed the same amount of times.
+         */
         DRAW,
+        /**
+         * Nothing happens or the letter has been guessed.
+         */
         NONE
-    }
-
-    public enum GameDifficulty {
-
-        EASY,
-        MEDIUM,
-        HARD
-    }
-
-    public enum GameType {
-
-        SINGLE, // A one-game - one word to guess.
-        MULTI, // Multiple level game - try to guess as many words as possible (maximum 15).
-        PVP // Two player game - players take turns after every guessed (or not) word.
     }
 
     /**
      * The step in hanging process.
      */
-    public int hangingTime = 0;
-    /**
-     * The jump caused by failed guess (easy - 1, medium - 2, hard - 4)
-     */
-    public static int hangingJump = 1;
+    private int hangmanStep = 0;
+
+    private boolean failedAWord = false;
 
     /**
-     * Enumration considering actual game situation.
+     * Enumeration variable with the actual game situation.
      */
-    public HangmanChange hangmanChange;
+    private GameStatus hangmanStatus;
+    private GameDifficulty gameDifficulty;
+    private GameType gameType;
+    private final GameWordLogic gameWordLogic;
+   
+    private int gameWordsDone = 0;
+    private int gameWordsGuessed = 0;
+
+    private Player[] players;
+    public int whichPlayer = 0;
     
-    public WordList wordList;
-    public int wordIndex;
-    public char wordChar[];
-    public ArrayList<Integer> wordCharIndexes;
+    public GameLogic(GameType gType, GameDifficulty gDiff, Player[] gPlayers) {
+        setType(gType);
+        setDifficulty(gDiff);
+        setPlayers(gPlayers);
         
-    public boolean isFieldShown = false;
-    public boolean isGameFinished = false;
-
-    public int gameScore;
-
-    private boolean guessedLetter;
-
-    private static GameDifficulty gDiff;
-    public static GameType gType;
-    private static int gWordsToGuess;
-    private static int gWordsUsed = 0;
-    public static Player[] players = {null, null};
-    
-    public GameLogic() {
-
+        gameWordLogic = new GameWordLogic();
+        
+        System.out.println(toString());
     }
 
     public void NewGame(/*Word ... words */) {
+        hangmanStatus = GameStatus.NONE;
+        hangmanStep = 0;
 
-        resetGame();
-        Word[] aWord = {new Word("Kaczka"), new Word("Romek"), new Word("Jasnek"), new Word("Marek"),
-                            new Word("Dziwaczka"),new Word("Franek"),new Word("Tomasz"),new Word("Janusz"),
-                            new Word("Word"),new Word("Kaszanka")}; // TO SUBSTITUTE
-        wordIndex = 0; // TO SUBSTITUTE
-       
-        
-        initializeWordEngine(aWord);
-        wordToChar(wordList, wordIndex);
+        failedAWord = false;
 
+        gameWordsDone = 0;
+        gameWordsGuessed = 0;
     }
 
     /**
-     * Converts a word from string into a character array.
-     * @param wordList Actual WordList object with words used in game.
-     * @param wordIndex The index of a word in wordList.
+     * Method is used for raining the player/players score.
+     * @param raise True means, that the score should be raised.
      */
-    public void wordToChar(WordList wordList, int wordIndex) {
-        int wordLength = wordList.getWordName(wordIndex).length();
-
-        this.wordChar = new char[wordLength];
-        String tempWord = wordList.getWordName(wordIndex);
-
-        for (int i = 0; i < wordLength; i++) {
-            wordChar[i] = tempWord.charAt(i);
-        }
+    public void changeScore(boolean raise) {
+        whichPlayer = gameType.changeScore(players, whichPlayer, raise);
     }
 
     /**
-     * Method used for converting a word and showing a field with it.
-     * When all words have been used the game is informed about it.
-     * @param index Index of a word form particular WordList.
-     */
-    public void outputNewWord(int index) {
-        if (index < wordList.getAmount()) {
-            wordIndex = index;
-            wordToChar(wordList, wordIndex);
-            changeHangman(HangmanChange.RESET);
-            isFieldShown = false;
-        } else {
-           
-        }
-    }
-
-    /**
-     * Creates a internal WordList with specified words.
-     * @param words Words to input into internal WordList.
-     */
-    public void initializeWordEngine(Word... words) {
-        wordList = new WordList();
-        wordList.addWords(words);
-
-    }
-
-    /**
-     * Sets the game difficulty (the amount of possible errors).
-     * @param gameDiff Type of difficulty.
-     */
-    public static void setDifficulty(GameDifficulty gameDiff) {
-
-        switch (gameDiff) {
-            case EASY: {
-                gDiff = GameDifficulty.EASY;
-                hangingJump = 1;
-                break;
-            }
-            case MEDIUM: {
-                gDiff = GameDifficulty.MEDIUM;
-                hangingJump = 2;
-                break;
-            }
-            case HARD: {
-                gDiff = GameDifficulty.HARD;
-                hangingJump = 3;
-                break;
-            }
-        }
-    }
-
-    /**
-     * Sets the game type for later usage.
-     * @param gameType
-     * @return 
-     */
-    public static boolean setType(GameType gameType) {
-
-        switch (gameType) {
-            case SINGLE: {
-                gType = GameType.SINGLE;
-                gWordsToGuess = 1;
-                break;
-            }
-            case MULTI: {
-                gType = GameType.MULTI;
-                gWordsToGuess = 10;
-                break;
-            }
-            case PVP: {
-                gType = GameType.PVP;
-                gWordsToGuess=10;
-                break;
-            }
-
-        }
-
-        return true;
-    }
-
-    /**
-     * Completely reset all in-game variables.
-     */
-    private void resetGame() {
-        hangmanChange = HangmanChange.NONE;
-        hangingTime = 0;
-        
-        gameScore = 0;
-        guessedLetter = false;
-        
-        wordList = null;
-        wordIndex = 0;
-        wordCharIndexes = null;
-        wordCharIndexes = new ArrayList<>();
-       
-        isFieldShown = false;
-    }
-
-    @Override
-    public String toString() {
-        return "Game type: " + gType + ", game difficulty: " + gDiff;
-    }
-
-    /**
-     * Checks a particular letter in a word then changes the guess level,
-     * hangman picture and winning/losing logic.
-     * Changes the key to disabled after checking it.
-     * @param small Small (char) representation of a letter.
-     * @param big Big (char) representation of a letter.
-     * @param keyButton A component (JLabel) that holds the letter.
-     */
-    public void checkLetter(char small, char big, JButton keyButton) {
-
-        wordCharIndexes.clear();
-
-        for (int i = 0; i < wordChar.length; i++) {
-            if (wordChar[i] == small || wordChar[i] == big) {
-                wordCharIndexes.add(i);
-                wordList.getWord(wordIndex).checkLetter(wordChar[i]);
-                guessedLetter = true;
-            }
-        }
-
-        keyButton.setEnabled(false);
-    }
-
-    /**
-     * Main logic behind checking the entire word.
-     * The moment of winning, failing, making a mistake and not doing anything
-     * is managed in this method.
+     * Main logic behind checking the entire word. The moment of winning,
+     * failing, making a mistake and not doing anything is managed in this
+     * method.
      */
     public void checkGuessResult() {
-        if(gWordsUsed < gWordsToGuess){
-            if (wordList.getWord(wordIndex).isGuessed()) {
-                changeHangman(GUESS);
-                gWordsUsed += 1;
-            } 
-            else if (!guessedLetter) { 
-                if (hangingTime > 11) { // Too much errors - fail!
-                    changeHangman(FAIL);
-                } else {
-                    changeHangman(WORSEN);
-                        if (hangingTime > 11) { // Too much errors = fail
-                            changeHangman(FAIL);
-                        }
-                }
-            } 
-            else { // Nothing changed = a letter must have been guessed
-                guessedLetter = false;
-                changeHangman(NONE);
-            }
-        } else {
-            changeHangman(WINGAME);
-             isGameFinished = true;
-        }
+        if (!isGameFinished()) {
+            if (gameWordsDone < gameType.getWordsAmount()) {
+                if (gameWordLogic.getWordList().getWord(gameWordLogic.getWordIndex()).isGuessed()) { // Guessed a Word
+                    changeGameStatus(GUESS);
+                    gameWordsGuessed += 1;
+                    gameWordsDone += 1;
+                    gameWordLogic.setWordIndex(gameWordLogic.getWordIndex()+1);
+                    isGameFinished();
+                } else if (gameWordLogic.isGuessedLetter() == false) {
+                    if (hangmanStep > 11) { // Too much errors - fail!
+                        changeGameStatus(FAIL);
+                        gameWordsDone += 1;
+                        failedAWord = true;
+                        isGameFinished();
+                    } else {
+                        changeGameStatus(WORSEN);
 
+                        if (hangmanStep > 11) { // Too much errors = fail
+                            changeGameStatus(FAIL);
+                            failedAWord = true;
+                            gameWordsDone += 1;
+                            isGameFinished();
+                        }
+                    }
+                } else { // Nothing changed = a letter must have been guessed
+                    gameWordLogic.setGuessedLetter(false);
+                    changeGameStatus(NONE);
+                }
+            }
+        }
     }
 
-    public void changeHangman(HangmanChange hC) {
+    /**
+     * Helper method for checkGuessResult(). 
+     * Informs about the actual state of the game.
+     * @return Boolean value true if the game is finished, false otherwise.
+     */
+    private boolean isGameFinished() {
 
-        switch (hC) {
+        int wordsAmount = gameType.getWordsAmount();
+        
+        switch (gameType.getGameTypeName()) {
+            case "SINGLE": {
+                if(gameWordsGuessed == wordsAmount){
+                    changeGameStatus(WINGAME);
+                    return true;
+                }
+                else if(gameWordsGuessed < gameWordsDone ){
+                    changeGameStatus(LOSEGAME);
+                    return true;
+                }
+                break;
+            }
+            case "MULTIPLE": {
+                if(gameWordsDone == wordsAmount){
+                    if (gameWordsGuessed == wordsAmount) {
+                        changeGameStatus(WINGAME);
+                        return true;
+                    }
+                }
+                else if (failedAWord) 
+                {
+                    changeGameStatus(LOSEGAME);
+                    return true;
+                }
+                break;
+            }
+            case "PVP": {
+                if (gameWordsDone == wordsAmount) {
+                    if (players[0].getScore() == players[1].getScore()) {
+                        changeGameStatus(DRAW);
+                        return true;
+                    } else {
+                        changeGameStatus(WINGAME);
+                        return true;
+                    }
+                }
+                break;
+            }
+            case "BIG": {
+                if (failedAWord) { // Failing means finishing the game
+                    changeGameStatus(LOSEGAME);
+                    return true;
+                }
+                else if(gameWordsGuessed == wordsAmount) { 
+                    changeGameStatus(WINGAME);
+                    return true;
+                }
+                break;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Changes the actual state of the game.
+     * @param gStatus GameStatus enumeration name.
+     */
+    public void changeGameStatus(GameStatus gStatus) {
+
+        switch (gStatus) {
             case WORSEN: {
-                hangingTime += hangingJump;
-                hangmanChange = WORSEN;       
+                hangmanStep += gameDifficulty.getDifficultyJump();
+                hangmanStatus = WORSEN;
                 break;
             }
             case RESET: {
-                hangingTime = 0;
-                setDifficulty(gDiff);
-                hangmanChange =  RESET;      
+                hangmanStep = 0;
+                hangmanStatus = RESET;
                 break;
             }
             case FAIL: {
-                hangmanChange =  FAIL;       
+                hangmanStatus = FAIL;
                 break;
             }
             case GUESS: {
-                hangmanChange = GUESS;    
+                hangmanStatus = GUESS;
                 break;
             }
             case WINGAME: {
-                hangmanChange = WINGAME;
+                hangmanStatus = WINGAME;
                 break;
             }
             case LOSEGAME: {
-                hangmanChange = LOSEGAME;
+                hangmanStatus = LOSEGAME;
                 break;
             }
             case DRAW: {
-                hangmanChange = DRAW;
+                hangmanStatus = DRAW;
                 break;
             }
             case NONE: {
-                hangmanChange = NONE;        
+                hangmanStatus = NONE;
                 break;
             }
         }
 
     }
+
+    
+    // <editor-fold defaultstate="collapsed" desc="Getters">
+    public int getHangmanStep() {
+        return hangmanStep;
+    }
+
+    public GameStatus getHangmanStatus() {
+        return hangmanStatus;
+    }
+    
+    public Player[] getPlayers() {
+        return players;
+    }
+        
+    public GameStatus getGameStatus() {
+        return this.hangmanStatus;
+    }
+    
+     public GameWordLogic getWordLogicEngine(){
+        return this.gameWordLogic;
+    }
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Setters">
+    /**
+     * Sets the players.
+     * @param players Player[] object used to set the players.
+     */
+    private void setPlayers(Player[] players) {
+        this.players = players;
+    }
+
+    /**
+     * Sets the game difficulty and the step of guessing.
+     * @param gameDiff Actual GameDifficulty object.
+     */
+    private void setDifficulty(GameDifficulty gameDiff) {
+        this.gameDifficulty = gameDiff;
+    }
+
+    /**
+     * Sets the game type and the amount of words to guess.
+     * @param gameType Actual GameType object.
+     */
+    private void setType(GameType gameType) {
+        this.gameType = gameType;
+    }
+
+    //</editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Overriden from Object">
+    /**
+     * Representaiton of the game state.
+     * @return Game state as a string.
+     */
+    @Override
+    public final String toString() {
+        return "Game type: " + gameType.getGameTypeName()
+                + ", game difficulty: " + gameDifficulty.getDifficultyName()
+                + ", player amount: " + gameType.getPlayersAmount()
+                + ", amount of words: " + gameType.getWordsAmount()
+                + "";
+    }  
+    // </editor-fold>
 
 }

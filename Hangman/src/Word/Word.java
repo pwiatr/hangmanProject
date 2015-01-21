@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hangman.Engine;
+package Word;
 
 /**
  * Word class represents a word that can be guessed throughout the game.

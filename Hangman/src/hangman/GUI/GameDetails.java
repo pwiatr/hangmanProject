@@ -6,15 +6,15 @@
 package hangman.GUI;
 
 /**
- *
+ * GameDetails static class contains universal variables with the game settings.
  * @author P
  */
 public  class GameDetails {
-    static int gameLocation = 200;
+    final static int gameLocation = 200;
    
-    static int gameWidth = 800;
-    static int gameHeight = 600;
+    final static int gameWidth = 800;
+    final static int gameHeight = 600;
     
-    static int gamePopupLocationW = gameLocation+gameWidth/2;
-    static int gamePopupLocationH = gameLocation+ gameHeight/3;
+    final static int gamePopupLocationW = gameLocation+gameWidth/2;
+    final static int gamePopupLocationH = gameLocation+ gameHeight/3;
 }

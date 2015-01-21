@@ -5,21 +5,23 @@
  */
 package hangman.GUI;
 
+import GameType.*;
+import GameDifficulty.*;
 import hangman.Engine.GameLogic;
-import hangman.Engine.GameLogic.GameDifficulty;
-import hangman.Engine.GameLogic.GameType;
+
 import hangman.Engine.Player;
 import hangman.GUI.GameAreaPanel;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 
 /**
- *
  * @author P
  */
 public class GamePreAreaPanel extends javax.swing.JPanel {
@@ -30,65 +32,54 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
     public GamePreAreaPanel() {
         initComponents();
         setBackground(Color.WHITE);
-        
-         GameLogic.setDifficulty(GameDifficulty.MEDIUM);
-    
-         // Na podstawie nazw kategorii w bazie pododować tutaj, a następnie
-         // przekazać do GameLogic rodzaj kategorii (po ID?)
-         categoryCombo.addItem(makeObj("Rzeczy"));
-          categoryCombo.addItem(makeObj("Kuchnia"));
-           categoryCombo.addItem(makeObj("Zwierzęta"));
-           
-           player2Label.setVisible(false);
-           playerName2.setVisible(false);
-           
-           typeSingleRadio.addItemListener(new VoteItemListener());
-           typeMultipleRadio.addItemListener(new VoteItemListener());
-           typePvpRadio.addItemListener(new VoteItemListener());
-           
-           GameLogic.setType(GameType.SINGLE); 
+
+        // TO-DO Dodać kategorie gier pobrane z bazy
+        categoryCombo.addItem(makeObj("Rzeczy"));
+        categoryCombo.addItem(makeObj("Kuchnia"));
+        categoryCombo.addItem(makeObj("Zwierzęta"));
+
+        player2Label.setVisible(false);
+        playerName2.setVisible(false);
+
+        typeSingleRadio.addItemListener(new VoteItemListener());
+        typeMultipleRadio.addItemListener(new VoteItemListener());
+        typePvpRadio.addItemListener(new VoteItemListener());
+
     }
-    
-    class VoteItemListener implements ItemListener{
+
+    /**
+     * ItemListener used for showing input fields (player names) and selecting
+     * game type.
+     */
+    class VoteItemListener implements ItemListener {
 
         @Override
         public void itemStateChanged(ItemEvent e) {
             boolean selected = (e.getStateChange() == ItemEvent.SELECTED);
-            AbstractButton button = (AbstractButton)e.getItemSelectable();
-            if(selected && (button.getActionCommand() == null ? 
-                    typePvpRadio.getActionCommand() == null : button.getActionCommand().equals(typePvpRadio.getActionCommand()))){
+            AbstractButton button = (AbstractButton) e.getItemSelectable();
+            if (selected && (button.getActionCommand() == null
+                    ? typePvpRadio.getActionCommand() == null : button.getActionCommand().equals(typePvpRadio.getActionCommand()))) {
                 player1Label.setText("Write 1st player name:");
                 player2Label.setVisible(true);
                 playerName2.setVisible(true);
-            }
-            else{
+            } else {
                 player1Label.setText("Write your name:");
                 player2Label.setVisible(false);
                 playerName2.setVisible(false);
             }
-            
-            switch(button.getActionCommand()){
-                case "Single game":
-                {
-                    GameLogic.setType(GameType.SINGLE); break;
-                }
-                 case "Multiple levels":
-                {
-                    GameLogic.setType(GameType.MULTI); break;
-                }
-                  case "Player VS Player":
-                {
-                    GameLogic.setType(GameType.PVP); break;
-                }
-            }
-           
+
         }
-        
+
     }
-   
-    private Object makeObj(final String item)  {
-        return new Object() { public String toString() { return item; } };
-     }
+
+    private Object makeObj(final String item) {
+        return new Object() {
+            public String toString() {
+                return item;
+            }
+        };
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -116,6 +107,7 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         player2Label = new javax.swing.JLabel();
         playerName1 = new javax.swing.JTextField();
         playerName2 = new javax.swing.JTextField();
+        typeBigRadio = new javax.swing.JRadioButton();
 
         setMaximumSize(new java.awt.Dimension(800, 600));
         setMinimumSize(new java.awt.Dimension(800, 600));
@@ -179,6 +171,11 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         gameTypeButGroup.add(typePvpRadio);
         typePvpRadio.setText("Player VS Player");
         typePvpRadio.setToolTipText("");
+        typePvpRadio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                typePvpRadioMouseEntered(evt);
+            }
+        });
 
         gameTypeButGroup.add(typeMultipleRadio);
         typeMultipleRadio.setText("Multiple levels");
@@ -217,6 +214,15 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
 
         playerName2.setText("Hang On!");
 
+        gameTypeButGroup.add(typeBigRadio);
+        typeBigRadio.setText("BIG Game");
+        typeBigRadio.setToolTipText("");
+        typeBigRadio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                typeBigRadioMouseEntered(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -237,18 +243,23 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
                                 .addGap(42, 42, 42))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(categoryLabel)
-                                    .addComponent(player1Label)
-                                    .addComponent(player2Label)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(categoryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(typePvpRadio)
                                             .addComponent(typeMultipleRadio)
                                             .addComponent(typeSingleRadio)
-                                            .addComponent(playerName1, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)))
-                                    .addComponent(playerName2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(typeBigRadio)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(categoryLabel)
+                                        .addComponent(player1Label)
+                                        .addComponent(player2Label)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGap(10, 10, 10)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(categoryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(playerName1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(playerName2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(playButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -279,6 +290,8 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(typePvpRadio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(typeBigRadio)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(categoryLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(categoryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -297,13 +310,13 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
 
     private void playButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playButtonActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run(){
-                 GameLogic.players[0] = new Player(playerName1.getText());
-                 if(GameLogic.gType == GameType.PVP){
-                   GameLogic.players[1] = new Player(playerName2.getText());
-                 }
-                 
-                  GameAreaPanel GAP  = new GameAreaPanel();
+            public void run() {
+
+                GameType gameType = setGameType();
+                GameDifficulty gameDiff = setGameDifficulty();
+                Player gamePlayers[] = setPlayers(gameType);
+                
+                GameAreaPanel GAP = new GameAreaPanel(gameType, gameDiff, gamePlayers);
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(GamePreAreaPanel.this);
                 topFrame.getContentPane().removeAll();
                 topFrame.add(GAP);
@@ -314,35 +327,97 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         });
     }//GEN-LAST:event_playButtonActionPerformed
 
-    private String changeLevel(int value){
-         switch(value){
-            case 0:
-            {
-                GameLogic.setDifficulty(GameDifficulty.EASY);
-                return "easy";
+    /**
+     * Sets the game type.
+     * @return GameType object containg the game type.
+     */
+    private GameType setGameType() {
+        Enumeration<AbstractButton> jButtons = gameTypeButGroup.getElements();
+        while (jButtons.hasMoreElements()) {
+            JRadioButton jRB = (JRadioButton) jButtons.nextElement();
+            if (jRB.isSelected()) {
+                switch (jRB.getActionCommand()) {
+                    case "Single game": {
+                        return new GameTypeSingle();
+                    }
+                    case "Multiple levels": {
+                        return new GameTypeMultiple();
+                    }
+                    case "Player VS Player": {
+                        return new GameTypePvp();
+
+                    }
+                    case "BIG Game": {
+                        return new GameTypeBig();
+                    }
+                }
+                break;
             }
-            case 1:
-            {
-                GameLogic.setDifficulty(GameDifficulty.MEDIUM);
-                return "medium";
+        }
+        return null;
+    }
+
+    /**
+     * Sets the game difficulty,
+     * @return GameDifficulty object containing the game difficulty.
+     */
+    private GameDifficulty setGameDifficulty() {
+        switch (levelSlider.getValue()) {
+            case 0: {
+                return new GameDifficulty("EASY",1);
             }
-            case 2:
-            {
-                GameLogic.setDifficulty(GameDifficulty.HARD);
-                return "hard";
+            case 1: {
+                 return new GameDifficulty("MEDIUM",2);
             }
-            default:
-            {
-                GameLogic.setDifficulty(GameDifficulty.MEDIUM);
-                return "medium";
+            case 2: {
+                return new GameDifficulty("HARD",3);
+            }
+            default: {
+                return new GameDifficulty("MEDIUM",2);
             }
         }
     }
     
+    /**
+     * Creates one/two players and assigns them their names.
+     * @param gType The type of game used for determining the amount of players.
+     */
+    private Player[] setPlayers(GameType gType) {
+        Player[] players = {null,null};
+        for (int i = 0; i < gType.getPlayersAmount(); i++) {
+            players[i] = new Player();
+        }
+
+        if (gType.getPlayersAmount() > 1) {
+            players[1].setName(playerName2.getText());
+        }
+        
+        players[0].setName(playerName1.getText());
+        
+        return players;
+
+    }
+
     private void levelSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_levelSliderStateChanged
-        levelLabel.setText("Choose your difficulty level (chosen: "+changeLevel(levelSlider.getValue())+").");
+        String labelLevel;
+        switch (levelSlider.getValue()) {
+            case 0: {
+                labelLevel= "easy"; break;
+            }
+            case 1: {
+                labelLevel= "medium"; break;
+            }
+            case 2: {
+                labelLevel = "hard"; break;
+            }
+            default: {
+                labelLevel = "medium"; break;
+            }
+        }
+        levelLabel.setText("Choose your difficulty level (chosen: " + labelLevel + ").");
     }//GEN-LAST:event_levelSliderStateChanged
 
+    // <editor-fold defaultstate="collapsed" desc="ToolTips">
     private void typeSingleRadioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_typeSingleRadioMouseEntered
         statusBarText.setText("A single game - only one Hangman to solve.");
     }//GEN-LAST:event_typeSingleRadioMouseEntered
@@ -351,7 +426,16 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         statusBarText.setText("A multiple level game - you have to solve multiple Hangmans to win.");
     }//GEN-LAST:event_typeMultipleRadioMouseEntered
 
+    private void typePvpRadioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_typePvpRadioMouseEntered
+        statusBarText.setText("Player versus player - you play with your friend taking turns after every hagnman.");
+    }//GEN-LAST:event_typePvpRadioMouseEntered
 
+    private void typeBigRadioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_typeBigRadioMouseEntered
+        statusBarText.setText("BIG game - try to guess as much hangmans as possible. Play well and you will achieve a highscore.");
+    }//GEN-LAST:event_typeBigRadioMouseEntered
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Generated Variabes">           
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox categoryCombo;
     private javax.swing.JLabel categoryLabel;
@@ -367,9 +451,11 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
     private javax.swing.JTextField playerName1;
     private javax.swing.JTextField playerName2;
     private javax.swing.JLabel statusBarText;
+    private javax.swing.JRadioButton typeBigRadio;
     private javax.swing.JLabel typeLabel;
     private javax.swing.JRadioButton typeMultipleRadio;
     private javax.swing.JRadioButton typePvpRadio;
     private javax.swing.JRadioButton typeSingleRadio;
     // End of variables declaration//GEN-END:variables
+    // </editor-fold>
 }

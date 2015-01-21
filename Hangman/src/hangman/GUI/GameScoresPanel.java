@@ -6,7 +6,11 @@
 package hangman.GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
@@ -15,13 +19,59 @@ import javax.swing.SwingUtilities;
  */
 public class GameScoresPanel extends javax.swing.JPanel {
 
+    public enum FieldType {
+        EASY,
+        MEDIUM,
+        HARD
+    }
+    
     /**
      * Creates new form GameScoresPanel
      */
     public GameScoresPanel() {
         initComponents();
+        
+        // To-DO Get data from database
+        String[] easyN = { "A","B","Tomek","Jarek","Przemek","Brak","Brak","Brak","Brak"};
+        String[] easyP = { "50","50","50","50","50","50","50","50","50"};
+        
+        assignPoints(easyN,easyP,FieldType.EASY);
+        assignPoints(easyN,easyP,FieldType.MEDIUM);
+        assignPoints(easyN,easyP,FieldType.HARD);
     }
 
+    private void assignPoints(String[] names, String[] points, FieldType fieldEnum){
+        switch(fieldEnum){
+            case EASY:
+            {
+                mergeData(easyNames,names);
+                mergeData(easyPoints,points);
+            }
+            case MEDIUM:
+            {
+                mergeData(mediumNames,names);
+                mergeData(mediumPoints,points);
+            }
+            case HARD:
+            {
+                mergeData(hardNames,names);
+                mergeData(hardPoints,points);
+            }
+        }
+        
+    }
+    
+    private void mergeData(JPanel field,String[] text){
+        int i = 0;
+        for(Component c: field.getComponents()){
+            JLabel cLabel = (JLabel)c;
+            cLabel.setText(text[i]);
+            i++;
+        }
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,7 +84,80 @@ public class GameScoresPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         statusBarText = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        easyPanelBig = new javax.swing.JPanel();
+        easyPanel = new javax.swing.JPanel();
+        easyPanelLabel = new javax.swing.JLabel();
+        easyScores = new javax.swing.JPanel();
+        easyNames = new javax.swing.JPanel();
+        scoreName1 = new javax.swing.JLabel();
+        scoreName2 = new javax.swing.JLabel();
+        scoreName3 = new javax.swing.JLabel();
+        scoreName4 = new javax.swing.JLabel();
+        scoreName5 = new javax.swing.JLabel();
+        scoreName6 = new javax.swing.JLabel();
+        scoreName7 = new javax.swing.JLabel();
+        scoreName8 = new javax.swing.JLabel();
+        scoreName9 = new javax.swing.JLabel();
+        easyPoints = new javax.swing.JPanel();
+        scorePoints1 = new javax.swing.JLabel();
+        scorePoints2 = new javax.swing.JLabel();
+        scorePoints3 = new javax.swing.JLabel();
+        scorePoints4 = new javax.swing.JLabel();
+        scorePoints5 = new javax.swing.JLabel();
+        scorePoints6 = new javax.swing.JLabel();
+        scorePoints7 = new javax.swing.JLabel();
+        scorePoints8 = new javax.swing.JLabel();
+        scorePoints9 = new javax.swing.JLabel();
+        mediumPanelBig = new javax.swing.JPanel();
+        mediumPanel = new javax.swing.JPanel();
+        mediumPanelLabel = new javax.swing.JLabel();
+        mediumScores = new javax.swing.JPanel();
+        mediumNames = new javax.swing.JPanel();
+        scoreName10 = new javax.swing.JLabel();
+        scoreName11 = new javax.swing.JLabel();
+        scoreName12 = new javax.swing.JLabel();
+        scoreName13 = new javax.swing.JLabel();
+        scoreName14 = new javax.swing.JLabel();
+        scoreName15 = new javax.swing.JLabel();
+        scoreName16 = new javax.swing.JLabel();
+        scoreName17 = new javax.swing.JLabel();
+        scoreName18 = new javax.swing.JLabel();
+        mediumPoints = new javax.swing.JPanel();
+        scorePoints10 = new javax.swing.JLabel();
+        scorePoints11 = new javax.swing.JLabel();
+        scorePoints12 = new javax.swing.JLabel();
+        scorePoints13 = new javax.swing.JLabel();
+        scorePoints14 = new javax.swing.JLabel();
+        scorePoints15 = new javax.swing.JLabel();
+        scorePoints16 = new javax.swing.JLabel();
+        scorePoints17 = new javax.swing.JLabel();
+        scorePoints18 = new javax.swing.JLabel();
+        hardPanelBig = new javax.swing.JPanel();
+        hardPanel = new javax.swing.JPanel();
+        hardPanelLabel = new javax.swing.JLabel();
+        hardScores = new javax.swing.JPanel();
+        hardNames = new javax.swing.JPanel();
+        scoreName28 = new javax.swing.JLabel();
+        scoreName29 = new javax.swing.JLabel();
+        scoreName30 = new javax.swing.JLabel();
+        scoreName31 = new javax.swing.JLabel();
+        scoreName32 = new javax.swing.JLabel();
+        scoreName33 = new javax.swing.JLabel();
+        scoreName34 = new javax.swing.JLabel();
+        scoreName35 = new javax.swing.JLabel();
+        scoreName36 = new javax.swing.JLabel();
+        hardPoints = new javax.swing.JPanel();
+        scorePoints28 = new javax.swing.JLabel();
+        scorePoints29 = new javax.swing.JLabel();
+        scorePoints30 = new javax.swing.JLabel();
+        scorePoints31 = new javax.swing.JLabel();
+        scorePoints32 = new javax.swing.JLabel();
+        scorePoints33 = new javax.swing.JLabel();
+        scorePoints34 = new javax.swing.JLabel();
+        scorePoints35 = new javax.swing.JLabel();
+        scorePoints36 = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(800, 600));
         setMinimumSize(new java.awt.Dimension(800, 600));
         setName(""); // NOI18N
@@ -52,7 +175,7 @@ public class GameScoresPanel extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(statusBarText, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE))
+                .addComponent(statusBarText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -69,26 +192,513 @@ public class GameScoresPanel extends javax.swing.JPanel {
             }
         });
 
+        easyPanelBig.setBackground(new java.awt.Color(51, 51, 51));
+
+        easyPanel.setBackground(new java.awt.Color(204, 204, 204));
+
+        easyPanelLabel.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        easyPanelLabel.setForeground(new java.awt.Color(255, 255, 255));
+        easyPanelLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        easyPanelLabel.setText("EASY");
+
+        javax.swing.GroupLayout easyPanelLayout = new javax.swing.GroupLayout(easyPanel);
+        easyPanel.setLayout(easyPanelLayout);
+        easyPanelLayout.setHorizontalGroup(
+            easyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(easyPanelLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+        );
+        easyPanelLayout.setVerticalGroup(
+            easyPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(easyPanelLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+        );
+
+        easyScores.setBackground(new java.awt.Color(51, 51, 51));
+
+        easyNames.setBackground(new java.awt.Color(51, 51, 51));
+        easyNames.setLayout(new java.awt.GridLayout(9, 0));
+
+        scoreName1.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName1.setText("Hang on on on");
+        easyNames.add(scoreName1);
+
+        scoreName2.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName2.setText("Hang on on on");
+        easyNames.add(scoreName2);
+
+        scoreName3.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName3.setText("Hang on on on");
+        easyNames.add(scoreName3);
+
+        scoreName4.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName4.setText("Hang on on on");
+        easyNames.add(scoreName4);
+
+        scoreName5.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName5.setText("Hang on on on");
+        easyNames.add(scoreName5);
+
+        scoreName6.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName6.setText("Hang on on on");
+        easyNames.add(scoreName6);
+
+        scoreName7.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName7.setText("Hang on on on");
+        easyNames.add(scoreName7);
+
+        scoreName8.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName8.setText("Hang on on on");
+        easyNames.add(scoreName8);
+
+        scoreName9.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName9.setText("Hang on on on");
+        easyNames.add(scoreName9);
+
+        easyPoints.setBackground(new java.awt.Color(51, 51, 51));
+        easyPoints.setLayout(new java.awt.GridLayout(9, 0));
+
+        scorePoints1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints1.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints1.setText("325");
+        easyPoints.add(scorePoints1);
+
+        scorePoints2.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints2.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints2.setText("325");
+        easyPoints.add(scorePoints2);
+
+        scorePoints3.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints3.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints3.setText("325");
+        easyPoints.add(scorePoints3);
+
+        scorePoints4.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints4.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints4.setText("325");
+        easyPoints.add(scorePoints4);
+
+        scorePoints5.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints5.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints5.setText("325");
+        easyPoints.add(scorePoints5);
+
+        scorePoints6.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints6.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints6.setText("325");
+        easyPoints.add(scorePoints6);
+
+        scorePoints7.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints7.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints7.setText("325");
+        easyPoints.add(scorePoints7);
+
+        scorePoints8.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints8.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints8.setText("325");
+        easyPoints.add(scorePoints8);
+
+        scorePoints9.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints9.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints9.setText("325");
+        easyPoints.add(scorePoints9);
+
+        javax.swing.GroupLayout easyScoresLayout = new javax.swing.GroupLayout(easyScores);
+        easyScores.setLayout(easyScoresLayout);
+        easyScoresLayout.setHorizontalGroup(
+            easyScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(easyScoresLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(easyNames, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(easyPoints, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        easyScoresLayout.setVerticalGroup(
+            easyScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(easyScoresLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(easyScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(easyPoints, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(easyNames, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout easyPanelBigLayout = new javax.swing.GroupLayout(easyPanelBig);
+        easyPanelBig.setLayout(easyPanelBigLayout);
+        easyPanelBigLayout.setHorizontalGroup(
+            easyPanelBigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(easyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(easyPanelBigLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(easyScores, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        easyPanelBigLayout.setVerticalGroup(
+            easyPanelBigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(easyPanelBigLayout.createSequentialGroup()
+                .addComponent(easyPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(easyScores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        mediumPanelBig.setBackground(new java.awt.Color(51, 51, 51));
+
+        mediumPanel.setBackground(new java.awt.Color(204, 204, 204));
+
+        mediumPanelLabel.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        mediumPanelLabel.setForeground(new java.awt.Color(255, 255, 255));
+        mediumPanelLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        mediumPanelLabel.setText("MEDIUM");
+
+        javax.swing.GroupLayout mediumPanelLayout = new javax.swing.GroupLayout(mediumPanel);
+        mediumPanel.setLayout(mediumPanelLayout);
+        mediumPanelLayout.setHorizontalGroup(
+            mediumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mediumPanelLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        mediumPanelLayout.setVerticalGroup(
+            mediumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mediumPanelLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+        );
+
+        mediumScores.setBackground(new java.awt.Color(51, 51, 51));
+
+        mediumNames.setBackground(new java.awt.Color(51, 51, 51));
+        mediumNames.setLayout(new java.awt.GridLayout(9, 0));
+
+        scoreName10.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName10.setText("Hang on on on");
+        mediumNames.add(scoreName10);
+
+        scoreName11.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName11.setText("Hang on on on");
+        mediumNames.add(scoreName11);
+
+        scoreName12.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName12.setText("Hang on on on");
+        mediumNames.add(scoreName12);
+
+        scoreName13.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName13.setText("Hang on on on");
+        mediumNames.add(scoreName13);
+
+        scoreName14.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName14.setText("Hang on on on");
+        mediumNames.add(scoreName14);
+
+        scoreName15.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName15.setText("Hang on on on");
+        mediumNames.add(scoreName15);
+
+        scoreName16.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName16.setText("Hang on on on");
+        mediumNames.add(scoreName16);
+
+        scoreName17.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName17.setText("Hang on on on");
+        mediumNames.add(scoreName17);
+
+        scoreName18.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName18.setText("Hang on on on");
+        mediumNames.add(scoreName18);
+
+        mediumPoints.setBackground(new java.awt.Color(51, 51, 51));
+        mediumPoints.setLayout(new java.awt.GridLayout(9, 0));
+
+        scorePoints10.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints10.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints10.setText("325");
+        mediumPoints.add(scorePoints10);
+
+        scorePoints11.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints11.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints11.setText("325");
+        mediumPoints.add(scorePoints11);
+
+        scorePoints12.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints12.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints12.setText("325");
+        mediumPoints.add(scorePoints12);
+
+        scorePoints13.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints13.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints13.setText("325");
+        mediumPoints.add(scorePoints13);
+
+        scorePoints14.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints14.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints14.setText("325");
+        mediumPoints.add(scorePoints14);
+
+        scorePoints15.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints15.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints15.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints15.setText("325");
+        mediumPoints.add(scorePoints15);
+
+        scorePoints16.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints16.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints16.setText("325");
+        mediumPoints.add(scorePoints16);
+
+        scorePoints17.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints17.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints17.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints17.setText("325");
+        mediumPoints.add(scorePoints17);
+
+        scorePoints18.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints18.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints18.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints18.setText("325");
+        mediumPoints.add(scorePoints18);
+
+        javax.swing.GroupLayout mediumScoresLayout = new javax.swing.GroupLayout(mediumScores);
+        mediumScores.setLayout(mediumScoresLayout);
+        mediumScoresLayout.setHorizontalGroup(
+            mediumScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mediumScoresLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mediumNames, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mediumPoints, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        mediumScoresLayout.setVerticalGroup(
+            mediumScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mediumScoresLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(mediumScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mediumPoints, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
+                    .addComponent(mediumNames, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout mediumPanelBigLayout = new javax.swing.GroupLayout(mediumPanelBig);
+        mediumPanelBig.setLayout(mediumPanelBigLayout);
+        mediumPanelBigLayout.setHorizontalGroup(
+            mediumPanelBigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(mediumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mediumPanelBigLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mediumScores, javax.swing.GroupLayout.PREFERRED_SIZE, 243, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        mediumPanelBigLayout.setVerticalGroup(
+            mediumPanelBigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mediumPanelBigLayout.createSequentialGroup()
+                .addComponent(mediumPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mediumScores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        hardPanelBig.setBackground(new java.awt.Color(51, 51, 51));
+
+        hardPanel.setBackground(new java.awt.Color(204, 204, 204));
+
+        hardPanelLabel.setFont(new java.awt.Font("Microsoft YaHei UI", 1, 18)); // NOI18N
+        hardPanelLabel.setForeground(new java.awt.Color(255, 255, 255));
+        hardPanelLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        hardPanelLabel.setText("HARD");
+
+        javax.swing.GroupLayout hardPanelLayout = new javax.swing.GroupLayout(hardPanel);
+        hardPanel.setLayout(hardPanelLayout);
+        hardPanelLayout.setHorizontalGroup(
+            hardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(hardPanelLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        hardPanelLayout.setVerticalGroup(
+            hardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(hardPanelLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+        );
+
+        hardScores.setBackground(new java.awt.Color(51, 51, 51));
+
+        hardNames.setBackground(new java.awt.Color(51, 51, 51));
+        hardNames.setLayout(new java.awt.GridLayout(9, 0));
+
+        scoreName28.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName28.setText("Hang on on on");
+        hardNames.add(scoreName28);
+
+        scoreName29.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName29.setText("Hang on on on");
+        hardNames.add(scoreName29);
+
+        scoreName30.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName30.setText("Hang on on on");
+        hardNames.add(scoreName30);
+
+        scoreName31.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName31.setText("Hang on on on");
+        hardNames.add(scoreName31);
+
+        scoreName32.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName32.setText("Hang on on on");
+        hardNames.add(scoreName32);
+
+        scoreName33.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName33.setText("Hang on on on");
+        hardNames.add(scoreName33);
+
+        scoreName34.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName34.setText("Hang on on on");
+        hardNames.add(scoreName34);
+
+        scoreName35.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName35.setText("Hang on on on");
+        hardNames.add(scoreName35);
+
+        scoreName36.setForeground(new java.awt.Color(255, 255, 255));
+        scoreName36.setText("Hang on on on");
+        hardNames.add(scoreName36);
+
+        hardPoints.setBackground(new java.awt.Color(51, 51, 51));
+        hardPoints.setLayout(new java.awt.GridLayout(9, 0));
+
+        scorePoints28.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints28.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints28.setText("325");
+        hardPoints.add(scorePoints28);
+
+        scorePoints29.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints29.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints29.setText("325");
+        hardPoints.add(scorePoints29);
+
+        scorePoints30.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints30.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints30.setText("325");
+        hardPoints.add(scorePoints30);
+
+        scorePoints31.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints31.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints31.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints31.setText("325");
+        hardPoints.add(scorePoints31);
+
+        scorePoints32.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints32.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints32.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints32.setText("325");
+        hardPoints.add(scorePoints32);
+
+        scorePoints33.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints33.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints33.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints33.setText("325");
+        hardPoints.add(scorePoints33);
+
+        scorePoints34.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints34.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints34.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints34.setText("325");
+        hardPoints.add(scorePoints34);
+
+        scorePoints35.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints35.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints35.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints35.setText("325");
+        hardPoints.add(scorePoints35);
+
+        scorePoints36.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        scorePoints36.setForeground(new java.awt.Color(255, 255, 255));
+        scorePoints36.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        scorePoints36.setText("325");
+        hardPoints.add(scorePoints36);
+
+        javax.swing.GroupLayout hardScoresLayout = new javax.swing.GroupLayout(hardScores);
+        hardScores.setLayout(hardScoresLayout);
+        hardScoresLayout.setHorizontalGroup(
+            hardScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(hardScoresLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(hardNames, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hardPoints, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        hardScoresLayout.setVerticalGroup(
+            hardScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(hardScoresLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(hardScoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(hardPoints, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
+                    .addComponent(hardNames, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout hardPanelBigLayout = new javax.swing.GroupLayout(hardPanelBig);
+        hardPanelBig.setLayout(hardPanelBigLayout);
+        hardPanelBigLayout.setHorizontalGroup(
+            hardPanelBigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(hardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(hardPanelBigLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(hardScores, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        hardPanelBigLayout.setVerticalGroup(
+            hardPanelBigLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(hardPanelBigLayout.createSequentialGroup()
+                .addComponent(hardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hardScores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(easyPanelBig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(mediumPanelBig, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(hardPanelBig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 505, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(hardPanelBig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(mediumPanelBig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(easyPanelBig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run(){
@@ -105,8 +715,80 @@ public class GameScoresPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel easyNames;
+    private javax.swing.JPanel easyPanel;
+    private javax.swing.JPanel easyPanelBig;
+    private javax.swing.JLabel easyPanelLabel;
+    private javax.swing.JPanel easyPoints;
+    private javax.swing.JPanel easyScores;
+    private javax.swing.JPanel hardNames;
+    private javax.swing.JPanel hardPanel;
+    private javax.swing.JPanel hardPanelBig;
+    private javax.swing.JLabel hardPanelLabel;
+    private javax.swing.JPanel hardPoints;
+    private javax.swing.JPanel hardScores;
     private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel mediumNames;
+    private javax.swing.JPanel mediumPanel;
+    private javax.swing.JPanel mediumPanelBig;
+    private javax.swing.JLabel mediumPanelLabel;
+    private javax.swing.JPanel mediumPoints;
+    private javax.swing.JPanel mediumScores;
+    private javax.swing.JLabel scoreName1;
+    private javax.swing.JLabel scoreName10;
+    private javax.swing.JLabel scoreName11;
+    private javax.swing.JLabel scoreName12;
+    private javax.swing.JLabel scoreName13;
+    private javax.swing.JLabel scoreName14;
+    private javax.swing.JLabel scoreName15;
+    private javax.swing.JLabel scoreName16;
+    private javax.swing.JLabel scoreName17;
+    private javax.swing.JLabel scoreName18;
+    private javax.swing.JLabel scoreName2;
+    private javax.swing.JLabel scoreName28;
+    private javax.swing.JLabel scoreName29;
+    private javax.swing.JLabel scoreName3;
+    private javax.swing.JLabel scoreName30;
+    private javax.swing.JLabel scoreName31;
+    private javax.swing.JLabel scoreName32;
+    private javax.swing.JLabel scoreName33;
+    private javax.swing.JLabel scoreName34;
+    private javax.swing.JLabel scoreName35;
+    private javax.swing.JLabel scoreName36;
+    private javax.swing.JLabel scoreName4;
+    private javax.swing.JLabel scoreName5;
+    private javax.swing.JLabel scoreName6;
+    private javax.swing.JLabel scoreName7;
+    private javax.swing.JLabel scoreName8;
+    private javax.swing.JLabel scoreName9;
+    private javax.swing.JLabel scorePoints1;
+    private javax.swing.JLabel scorePoints10;
+    private javax.swing.JLabel scorePoints11;
+    private javax.swing.JLabel scorePoints12;
+    private javax.swing.JLabel scorePoints13;
+    private javax.swing.JLabel scorePoints14;
+    private javax.swing.JLabel scorePoints15;
+    private javax.swing.JLabel scorePoints16;
+    private javax.swing.JLabel scorePoints17;
+    private javax.swing.JLabel scorePoints18;
+    private javax.swing.JLabel scorePoints2;
+    private javax.swing.JLabel scorePoints28;
+    private javax.swing.JLabel scorePoints29;
+    private javax.swing.JLabel scorePoints3;
+    private javax.swing.JLabel scorePoints30;
+    private javax.swing.JLabel scorePoints31;
+    private javax.swing.JLabel scorePoints32;
+    private javax.swing.JLabel scorePoints33;
+    private javax.swing.JLabel scorePoints34;
+    private javax.swing.JLabel scorePoints35;
+    private javax.swing.JLabel scorePoints36;
+    private javax.swing.JLabel scorePoints4;
+    private javax.swing.JLabel scorePoints5;
+    private javax.swing.JLabel scorePoints6;
+    private javax.swing.JLabel scorePoints7;
+    private javax.swing.JLabel scorePoints8;
+    private javax.swing.JLabel scorePoints9;
     private javax.swing.JLabel statusBarText;
     // End of variables declaration//GEN-END:variables
 }

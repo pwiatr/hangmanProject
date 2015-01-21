@@ -10,12 +10,16 @@ package hangman.Engine;
  * @author P
  */
 public class Player {
-    private final String playerName;
+    private String playerName;
     private int score;
     
-    public Player(String name){
-        playerName = name;
+    public Player(){
         score = 0;
+    }
+    
+    public Player(String name){
+        score = 0;
+        playerName = name;
     }
     
     public void raiseScore(){
@@ -25,4 +29,19 @@ public class Player {
     public int getScore(){
         return score;
     }
+
+    public String getName(){
+        return playerName;
+    }
+    
+    public void setName(String name){
+        playerName = name;
+    }
+    
+    @Override
+    public String toString() {
+        return "Player{" + "playerName=" + playerName + ", score=" + score + '}';
+    }
+    
+    
 }

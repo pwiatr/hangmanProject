@@ -51,20 +51,28 @@
                           </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="categoryLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="player1Label" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="player2Label" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                          <Component id="categoryCombo" alignment="0" max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="typePvpRadio" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="typeMultipleRadio" alignment="0" min="-2" max="-2" attributes="0"/>
                                           <Component id="typeSingleRadio" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="playerName1" alignment="0" pref="153" max="32767" attributes="0"/>
+                                          <Component id="typeBigRadio" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Component id="playerName2" alignment="1" min="-2" pref="153" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="0" groupAlignment="0" attributes="0">
+                                      <Component id="categoryLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="player1Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="player2Label" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                              <Component id="categoryCombo" alignment="0" max="32767" attributes="0"/>
+                                              <Component id="playerName1" alignment="0" min="-2" pref="153" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <Component id="playerName2" alignment="1" min="-2" pref="153" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
@@ -103,6 +111,8 @@
                       <Component id="typeMultipleRadio" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="typePvpRadio" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="typeBigRadio" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="categoryLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -224,6 +234,9 @@
         <Property name="text" type="java.lang.String" value="Player VS Player"/>
         <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="typePvpRadioMouseEntered"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="typeMultipleRadio">
       <Properties>
@@ -308,6 +321,18 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Hang On!"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="typeBigRadio">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="gameTypeButGroup"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="BIG Game"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="typeBigRadioMouseEntered"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>
