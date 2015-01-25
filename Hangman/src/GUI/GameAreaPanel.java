@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hangman.GUI;
+package GUI;
 
 import GameType.GameType;
 import GameDifficulty.*;
-import hangman.Engine.GameLogic;
-import hangman.Engine.GameLogic.GameStatus;
+import Engine.GameLogic;
+import Engine.GameLogic.GameStatus;
 import Word.WordList;
-import hangman.Engine.GameWordLogic;
-import hangman.Engine.Player;
+import Engine.GameWordLogic;
+import Engine.Player;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
@@ -22,11 +22,14 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 /**
- *
- * @author P
+ * GameAreaPanel is a JPanel containg the main game elements.
+ * @author Kuba Włodarz i Przemysław Pędziwiatr
  */
 public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
+    /**
+     * Inner helper class - a label used as a particular letter in a word.
+     */
     class CharLabel extends javax.swing.JLabel {
            public CharLabel() {
                this.setFont(new java.awt.Font("Microsoft YaHei", 0, 24)); // NOI18N
@@ -76,13 +79,33 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
     }
     // </editor-fold>
     
+    /**
+     * Used for connection with game logic.
+     */
     private GameLogic gLogic;
-    private ArrayList<javax.swing.JLabel> charLabels;
+    /**
+     * Used for connection with logic that manages all ingame words.
+     */
     private final GameWordLogic gWordLogic;
+    /**
+     * Labels used for displaying the letters.
+     */
+    private ArrayList<javax.swing.JLabel> charLabels;
+    /**
+     * Determines wether the words are visible or not.
+     */
     private boolean isFieldShown = false;
     
     
-    public GameAreaPanel(GameType gType, GameDifficulty gDiff, Player[] gPlayers) {
+    /**
+     * Constructs a new game area panel that holds the main game.
+     * @param gType The type of the game.
+     * @param gDiff The difficulty of the game.
+     * @param gPlayers The players that take part in the game.
+     * @param gCategory The category of words used in the game.
+     */
+    public GameAreaPanel(GameType gType, GameDifficulty gDiff, 
+            Player[] gPlayers, String gCategory) {
         initComponents();
         setBackground(Color.WHITE);
 
@@ -96,56 +119,98 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
             }
         });
 
-        gLogic = new GameLogic(gType, gDiff, gPlayers);
+        gLogic = new GameLogic(gType, gDiff, gPlayers, gCategory);
         gWordLogic = gLogic.getWordLogicEngine();
         gLogic.NewGame();
         changeScoreLabel();
         gameRenderLogic();
     }
 
+    /**
+     * The logic that behaves similiar to a game loop.
+     * Contains all the logic for showing letters and word checking behaviour.
+     */
     private void gameRenderLogic() {
         if (!isFieldShown) {
-            showFieldWithWord(gWordLogic.getWordList(), gWordLogic.getWordIndex());
-            isFieldShown = true;
-        } else {
-
+            isFieldShown = showFieldWithWord();
+        } 
+        else {
             gameSetLabelsLetters(); // Sets labels to letters
             gLogic.checkGuessResult(); // Checks the guess result
             gameBehaviourLogic(); // Handles what to do with the result
             changeScoreLabel(); // Changes the score
+            
             System.out.println("Actual state: " + gLogic.getHangmanStatus());
-
         }
     }
  
+    /**
+     * Takes care of rendering the game accordingly to the in-game logic.
+     */
     private void gameBehaviourLogic() {
-        switch (gLogic.getHangmanStatus()) {
-            case FAIL: {
-                loseWord();
-                break;
+        if("PVP".equals(gLogic.getGameType().getGameTypeName())){
+            int playerIndex = gLogic.whichPlayer+1;
+            switch (gLogic.getHangmanStatus()) {
+                case FAIL: {
+                    String t = "Nie zgadłeś graczu nr.";
+                    showPopup(t+playerIndex);
+                    gLogic.changeScore(false);
+                    break;
+                }
+                case GUESS: {
+                    String t = "Zgadłeś graczu nr.";
+                    showPopup(t+playerIndex);
+                    gLogic.changeScore(true);
+                    break;
+                }
+                case DRAW: {
+                    showPopup("Remis!");
+                    break;
+                }
+                case WINGAME:
+                {
+                    Player[] playersTemp = gLogic.getPlayers();
+                    if(playersTemp[0].getScore() > playersTemp[1].getScore())
+                        showPopup("Wygrał gracz nr 1!");
+                    else
+                        showPopup("Wygrał gracz nr 2!");
+                    break;
+                }
+                case WORSEN: {
+                    changeHangman();
+                    break;
+                }
             }
-            case GUESS: {
-                winWord();
-                break;
-            }
-            case WINGAME: {
-                showPopup("Wygrałeś!");
-                winWord();
-                break;
-            }
-            case WORSEN: {
-                changeHangman();
-                break;
-            }
-            case LOSEGAME: {
-                showPopup("Przegrałeś!");
-                loseWord();
-                break;
+        }
+        else {
+            switch (gLogic.getHangmanStatus()) {
+                case FAIL: {
+                    loseWord();
+                    break;
+                }
+                case GUESS: {
+                    winWord();
+                    break;
+                }
+                case WINGAME: {
+                    showPopup("Wygrałeś!");
+                    winWord();
+                    break;
+                }
+                case WORSEN: {
+                    changeHangman();
+                    break;
+                }
+                case LOSEGAME: {
+                    showPopup("Przegrałeś!");
+                    loseWord();
+                    break;
+                }
             }
         }
     }
 
-        /**
+    /**
      * The behaviour when the word has not been guessed.
      */
     private void loseWord() {
@@ -167,8 +232,11 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
         gLogic.changeScore(true);
     }
 
+    /**
+     * Decides what to do after having done (guessed/failed) a word.
+     */
     public void continueGame() {
-        if (gLogic.getGameStatus() != GameStatus.WINGAME
+        if (    gLogic.getGameStatus() != GameStatus.WINGAME
                 && gLogic.getGameStatus() != GameStatus.LOSEGAME
                 && gLogic.getGameStatus() != GameStatus.DRAW) {
             renderNewWord();
@@ -176,24 +244,32 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
             changeKeyboardMode(false);
         }
     }
-
+    
+    /**
+     * Handles converting and rendering a new word.
+     */
     private void renderNewWord() {
         isFieldShown = gWordLogic.convertNewWord(gWordLogic.getWordIndex());
         gameRenderLogic();
     }
 
+    /**
+     * Changes screen information about scores.
+     */
     private void changeScoreLabel() {
-        String p1 = gLogic.getPlayers()[0].getName() + " score is (" + gLogic.getPlayers()[0].getScore() + ")";
+        String p1 = gLogic.getPlayers()[0].getName() + " ma punktów (" + gLogic.getPlayers()[0].getScore() + ")";
         scoreP1Label.setText(p1);
         if (gLogic.getPlayers()[1] != null) {
-            String p2 = gLogic.getPlayers()[1].getName() + " score is (" + gLogic.getPlayers()[0].getScore() + ")";
+            String p2 = gLogic.getPlayers()[1].getName() + " ma punktów (" + gLogic.getPlayers()[1].getScore() + ")";
             scoreP2Label.setText(p2);
         } else {
-            scoreP2Label.setText("Good luck!");
+            scoreP2Label.setText("Powodzenia!");
         }
     }
-
     
+    /**
+     * Sets all labels according to the letters they should contain.
+     */
     private void gameSetLabelsLetters() {
         for (Integer e : gWordLogic.getWordCharacterIndexes()) { // Setting char labels to a guessed letter
             int i = (int) e;
@@ -203,12 +279,9 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
     /**
      * Shows all letters as a JLabel objects on screen.
-     *
-     * @param wordList WordList objects with words used in game.
-     * @param wordIndex Index of particular word in WordList
      * @return True if everything went well.
      */
-    public boolean showFieldWithWord(WordList wordList, int wordIndex) {
+    public boolean showFieldWithWord() {
         int wordLength = gWordLogic.getWordCharacters().length;
 
         wordAreaPanel.removeAll();
@@ -233,13 +306,13 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
         changeHangman();
         changeKeyboardMode(true);
         this.requestFocus();
+        
 
         return true;
     }
 
     /**
-     * Shows a popup with text.
-     *
+     * Creates and shows a popup with text.
      * @param text Text to show in popup.
      */
     public void showPopup(String text) {
@@ -285,8 +358,7 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
     }
 
     /**
-     * Changes the keyboard to enabled/disabled.
-     *
+     * Changes the entire keyboard to enabled/disabled.
      * @param enable True - the keyboard gets enabled, false otherwise.
      */
     private void changeKeyboardMode(boolean enable) {
@@ -307,7 +379,7 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        returnButton = new javax.swing.JButton();
         scoreP1Label = new javax.swing.JLabel();
         scoreP2Label = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -359,25 +431,25 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jButton1.setBackground(new java.awt.Color(51, 51, 51));
-        jButton1.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Back to menu");
-        jButton1.setToolTipText("");
-        jButton1.setBorder(null);
-        jButton1.setBorderPainted(false);
-        jButton1.setDoubleBuffered(true);
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        returnButton.setBackground(new java.awt.Color(51, 51, 51));
+        returnButton.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
+        returnButton.setForeground(new java.awt.Color(255, 255, 255));
+        returnButton.setText("Powrót do menu");
+        returnButton.setToolTipText("");
+        returnButton.setBorder(null);
+        returnButton.setBorderPainted(false);
+        returnButton.setDoubleBuffered(true);
+        returnButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                jButton1MouseEntered(evt);
+                returnButtonMouseEntered(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                jButton1MousePressed(evt);
+                returnButtonMousePressed(evt);
             }
         });
 
         scoreP1Label.setFont(new java.awt.Font("Microsoft YaHei", 0, 18)); // NOI18N
-        scoreP1Label.setText("Score - player 1 (0)");
+        scoreP1Label.setText("Wynik - gracz 1 (0)");
         scoreP1Label.setToolTipText("");
         scoreP1Label.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -386,13 +458,8 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
         });
 
         scoreP2Label.setFont(new java.awt.Font("Microsoft YaHei", 0, 18)); // NOI18N
-        scoreP2Label.setText("Score - player 2 (0)");
+        scoreP2Label.setText("Wynik - gracz 2 (0)");
         scoreP2Label.setToolTipText("");
-        scoreP2Label.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                scoreP2LabelMouseEntered(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -400,7 +467,7 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(returnButton, javax.swing.GroupLayout.PREFERRED_SIZE, 305, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scoreP1Label, javax.swing.GroupLayout.Alignment.TRAILING)
@@ -412,7 +479,7 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(returnButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(scoreP1Label)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
@@ -1156,23 +1223,23 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
 
     // <editor-fold defaultstate="collapsed" desc="Status bar tips">                     
     private void buttonPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonPanelMouseEntered
-        statusBarText.setText("Choose a letter (you can also use your keyboard).");
+        statusBarText.setText("Wybierz literę (możesz użyć klawiatury).");
     }//GEN-LAST:event_buttonPanelMouseEntered
 
     private void wordAreaPanelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_wordAreaPanelMouseEntered
-        statusBarText.setText("Here you can see the word you are guessing.");
+        statusBarText.setText("Słowo, które próbujesz odgadnąć.");
     }//GEN-LAST:event_wordAreaPanelMouseEntered
 
-    private void jButton1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseEntered
-        statusBarText.setText("Exit to main menu.");
-    }//GEN-LAST:event_jButton1MouseEntered
+    private void returnButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_returnButtonMouseEntered
+        statusBarText.setText("Wyjście do menu głównego.");
+    }//GEN-LAST:event_returnButtonMouseEntered
 
     private void scoreP1LabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scoreP1LabelMouseEntered
-        statusBarText.setText("The score you gained throughout the game.");
+        statusBarText.setText("Wynik, który zdobyto w trakcie grania.");
     }//GEN-LAST:event_scoreP1LabelMouseEntered
     // </editor-fold>
 
-    private void jButton1MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MousePressed
+    private void returnButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_returnButtonMousePressed
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 gLogic = null;
@@ -1185,11 +1252,7 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
                 topFrame.repaint();
             }
         });
-    }//GEN-LAST:event_jButton1MousePressed
-
-    private void scoreP2LabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_scoreP2LabelMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_scoreP2LabelMouseEntered
+    }//GEN-LAST:event_returnButtonMousePressed
 
     // <editor-fold defaultstate="collapsed" desc="Swing Components">
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1230,10 +1293,10 @@ public class GameAreaPanel extends javax.swing.JPanel implements KeyListener {
     private javax.swing.JButton ZBut;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JLabel hangingMan;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JButton returnButton;
     private javax.swing.JLabel scoreP1Label;
     private javax.swing.JLabel scoreP2Label;
     private javax.swing.JPanel statusBar;

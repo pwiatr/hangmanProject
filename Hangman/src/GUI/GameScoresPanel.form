@@ -94,7 +94,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Take a look at high scores."/>
+            <Property name="text" type="java.lang.String" value="Tu mo&#x17c;esz sprawdzi&#x107; wyniki."/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
         </Component>
@@ -130,7 +130,7 @@
               <Component id="easyPanel" max="32767" attributes="0"/>
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="easyScores" pref="0" max="32767" attributes="0"/>
+                  <Component id="easyScores" pref="243" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>

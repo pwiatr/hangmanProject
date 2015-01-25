@@ -5,19 +5,20 @@
  */
 package GameType;
 
+import Database.DBFetch;
+
 /**
- *
- * @author P
+ * Big game type.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class GameTypeBig extends GameType{
 
-    public GameTypeBig() {
-        super(1,5,"BIG");
+    /**
+     * Constructs a new GameTypeBig object with specified word amount.
+     * @param gameCategory The chosen category used to get the amount of words.
+     */
+    public GameTypeBig(String gameCategory) {
+        super(1,DBFetch.fetchWordsAmount(gameCategory),"BIG");
     }
-
-   public void saveScore(){
-       
-   }
-    
     
 }

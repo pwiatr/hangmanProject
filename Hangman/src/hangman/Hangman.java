@@ -1,52 +1,17 @@
-
 package hangman;
 
-import hangman.Engine.*;
-import hangman.GUI.GameMainWindow;
+import GUI.GameMainWindow;
 
 /**
- *
- * @author P
+ * The main class.
+ * @author Jakub Włodarz i Przemysław Pędziwiar
  */
-public class Hangman /*extends JFrame */ {
+class Hangman  {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception{
-        
-//        GameScreen f = new GameScreen();
-//        GameWindow w = new GameWindow(f);
-//        
-//        w.run(1024,768);
-//
-//
-//       GameElements elem = new GameElements();
-//       
-//       SwingUtilities.invokeLater(new Runnable() {
-//            public void run(){
-//                f.add(elem);
-//                f.setVisible(true);
-//            }
-//        });
-
-//        Word aWord = new Word("aaa");
-//        Word bWord = new Word("eee");
-//        
-//        WordList wList = new WordList();
-//        wList.addWords(aWord,bWord);
-//        
-//        for(int i = 0; i < wList.getAmount(); i++){
-//            Word wordCheck;
-//            if( (wordCheck = wList.getWord(i)) != null){
-//                wordCheck.checkLetter('a');
-//                wordCheck.checkLetter('t');
-//            }
-//        }
-//        
-//        System.out.println("Guessed: " + wList.checkGuessed() + " from " + wList.getAmount());
-        
-        GameMainWindow game = new GameMainWindow();
         
            /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -75,8 +40,6 @@ public class Hangman /*extends JFrame */ {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GameMainWindow().setVisible(true);
-                System.out.println("Hangman opened.");
-                
             }
         });
 

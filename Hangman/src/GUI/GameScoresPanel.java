@@ -3,44 +3,70 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hangman.GUI;
+package GUI;
 
+import Database.DBFetch;
+import GameDifficulty.GameDifficulty;
+import GameType.GameType;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.LayoutManager;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
- *
- * @author P
+ * An area that show the game scores.
+ * @author Jakbu Włodarz i Przemysław Pędziwiatr
  */
-public class GameScoresPanel extends javax.swing.JPanel {
-
+public class GameScoresPanel extends javax.swing.JPanel {    
+    
+    /**
+     * FieldType enumeration is used for differentiating the type of field
+     * where scores should be put in.
+     */
     public enum FieldType {
+        /**
+         * Easy type
+         */
         EASY,
+        /**
+         * Medium type
+         */
         MEDIUM,
+        /**
+         * Hard type
+         */
         HARD
     }
     
     /**
-     * Creates new form GameScoresPanel
+     * Constructs a new game scores panel.
      */
     public GameScoresPanel() {
         initComponents();
-        
-        // To-DO Get data from database
-        String[] easyN = { "A","B","Tomek","Jarek","Przemek","Brak","Brak","Brak","Brak"};
-        String[] easyP = { "50","50","50","50","50","50","50","50","50"};
-        
-        assignPoints(easyN,easyP,FieldType.EASY);
-        assignPoints(easyN,easyP,FieldType.MEDIUM);
-        assignPoints(easyN,easyP,FieldType.HARD);
-    }
 
-    private void assignPoints(String[] names, String[] points, FieldType fieldEnum){
+        assignPointsNames(DBFetch.fetchNames(FieldType.EASY),
+                DBFetch.fetchPoints(FieldType.EASY),
+                FieldType.EASY);
+        assignPointsNames(DBFetch.fetchNames(FieldType.MEDIUM),
+                DBFetch.fetchPoints(FieldType.MEDIUM),
+                FieldType.MEDIUM);
+        assignPointsNames(DBFetch.fetchNames(FieldType.HARD),
+                DBFetch.fetchPoints(FieldType.HARD),
+                FieldType.HARD);
+    }
+    
+    /**
+     * Assigns points and names to desired columns.
+     * @param names The names used to assign to a names column.
+     * @param points The points used to assign to a points column.
+     * @param fieldEnum Type of game/column to assign the values to.
+     */
+    private void assignPointsNames(String[] names, String[] points, FieldType fieldEnum){
         switch(fieldEnum){
             case EASY:
             {
@@ -61,11 +87,26 @@ public class GameScoresPanel extends javax.swing.JPanel {
         
     }
     
+    /**
+     * Helper method used for setting the values to appriopriate fields.
+     * @param field The field to merge the value to.
+     * @param text  The array of values to marge.
+     */
     private void mergeData(JPanel field,String[] text){
         int i = 0;
+        String[] inputText = new String[9];
+        for(int k=0; k<9; k++){
+            if(k < text.length){
+                inputText[k] = text[k];
+            } 
+            else {
+                inputText[k] = "---";
+            }
+        }
+        
         for(Component c: field.getComponents()){
             JLabel cLabel = (JLabel)c;
-            cLabel.setText(text[i]);
+            cLabel.setText(inputText[i]);
             i++;
         }
     }
@@ -166,7 +207,7 @@ public class GameScoresPanel extends javax.swing.JPanel {
 
         statusBarText.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         statusBarText.setForeground(new java.awt.Color(255, 255, 255));
-        statusBarText.setText("Take a look at high scores.");
+        statusBarText.setText("Tu możesz sprawdzić wyniki.");
         statusBarText.setToolTipText("");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -338,7 +379,7 @@ public class GameScoresPanel extends javax.swing.JPanel {
             .addComponent(easyPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(easyPanelBigLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(easyScores, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(easyScores, javax.swing.GroupLayout.PREFERRED_SIZE, 243, Short.MAX_VALUE)
                 .addContainerGap())
         );
         easyPanelBigLayout.setVerticalGroup(

@@ -3,16 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hangman.GUI;
+package GUI;
 
+import Database.DBConnect;
 import java.awt.BorderLayout;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 import javax.swing.SwingUtilities;
 
 /**
- *
- * @author P
+ * The main menu panel containing New Game, Scores and Exit butons.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class GameMainMenuPanel extends javax.swing.JPanel {
 
@@ -53,7 +61,7 @@ public class GameMainMenuPanel extends javax.swing.JPanel {
         jButton1.setBackground(new java.awt.Color(51, 51, 51));
         jButton1.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("New Game");
+        jButton1.setText("Nowa gra");
         jButton1.setActionCommand("");
         jButton1.setMaximumSize(new java.awt.Dimension(300, 50));
         jButton1.setMinimumSize(new java.awt.Dimension(300, 50));
@@ -67,7 +75,7 @@ public class GameMainMenuPanel extends javax.swing.JPanel {
         jButton2.setBackground(new java.awt.Color(51, 51, 51));
         jButton2.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Scores");
+        jButton2.setText("Wyniki");
         jButton2.setActionCommand("");
         jButton2.setMaximumSize(new java.awt.Dimension(300, 50));
         jButton2.setMinimumSize(new java.awt.Dimension(300, 50));
@@ -81,7 +89,7 @@ public class GameMainMenuPanel extends javax.swing.JPanel {
         jButton3.setBackground(new java.awt.Color(51, 51, 51));
         jButton3.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
         jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Exit");
+        jButton3.setText("Wyjście");
         jButton3.setActionCommand("");
         jButton3.setMaximumSize(new java.awt.Dimension(300, 50));
         jButton3.setMinimumSize(new java.awt.Dimension(300, 50));
@@ -97,7 +105,7 @@ public class GameMainMenuPanel extends javax.swing.JPanel {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Welcome to hangman. Choose an option.");
+        jLabel1.setText("Witaj w grze \"Hangman\"!");
 
         javax.swing.GroupLayout statusBarLayout = new javax.swing.GroupLayout(statusBar);
         statusBar.setLayout(statusBarLayout);
@@ -144,9 +152,7 @@ public class GameMainMenuPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        //        GameArea ga = new GameArea();
-
+               
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run(){
 

@@ -1,15 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GameDifficulty;
 
 /**
- *
- * @author P
+ * The difficulty of a game.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class GameDifficulty {
+    /**
+     * The name of a difficulty.
+     */
     private final String difficultyName;
     
     /**
@@ -17,18 +15,32 @@ public class GameDifficulty {
      */
     private final int difficultyJump;
     
+    /**
+     * Constructs GameDifficulty object with specified name and jump.
+     * @param diffName The name of a difficulty.
+     * @param diffJump The amount of hangman jump.
+     */
     public GameDifficulty(String diffName, int diffJump){
         difficultyName = diffName;
         difficultyJump = diffJump;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Getters Setters">
+    /**
+     * Gets the string representation of difficulty name.
+     * @return String contaning the difficulty name.
+     */
     public String getDifficultyName() {
         return difficultyName;
     }
 
+    /**
+     * Gets the difficulty jump amount.
+     * @return Difficulty jump.
+     */
     public int getDifficultyJump() {
         return difficultyJump;
     }
-    
+    //</editor-fold>
     
 }

@@ -3,27 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hangman.GUI;
+package GUI;
 
+import Engine.GameDetails;
 import java.awt.Color;
 import javax.swing.JFrame;
 
 /**
- *
- * @author P
+ * A popup that's used for showing important information.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
-public class GamePopup extends javax.swing.JFrame {
-
-    private final GameAreaPanel callee;
+public class InfoPopup extends javax.swing.JFrame {
     
-    public GamePopup(GameAreaPanel mainWindow){
+    /**
+     * Construcsts a new info popup.
+     */
+    public InfoPopup(){
         initComponents();
         this.setVisible(false);
         setText("");
         this.getContentPane().setBackground(Color.WHITE);
         this.setLocation(GameDetails.gamePopupLocationW-this.getWidth()/2,
                          GameDetails.gamePopupLocationH);
-        callee = mainWindow;
     }
 
     /**
@@ -41,7 +42,6 @@ public class GamePopup extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        setMaximumSize(new java.awt.Dimension(300, 100));
         setMinimumSize(new java.awt.Dimension(300, 100));
         setName("gamePopup"); // NOI18N
         setResizable(false);
@@ -108,10 +108,18 @@ public class GamePopup extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Sets the info popup text.
+     * @param text The text that's shown in popup.
+     */
     private void setText(String text){
         informationLabel.setText(text);
     }
     
+    /**
+    * A method used for showing the popup.
+    * @param text 
+    */
     public void showPopup(String text){
         this.setVisible(true);
          this.setLocation(GameDetails.gamePopupLocationW-this.getWidth()/2,
@@ -121,7 +129,6 @@ public class GamePopup extends javax.swing.JFrame {
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         this.setVisible(false);
-        callee.continueGame();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -141,14 +148,15 @@ public class GamePopup extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GamePopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InfoPopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GamePopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InfoPopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GamePopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InfoPopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GamePopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(InfoPopup.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */

@@ -1,69 +1,127 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hangman.Engine;
+package Engine;
 
+import Database.DBFetch;
 import Word.Word;
 import Word.WordList;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.JButton;
 
 /**
- *
- * @author P
+ * GameWordLogic takes care of all stuff connected with checking words.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class GameWordLogic {
+    /**
+     * Word list used in the game.
+     */
     private WordList wordList;
+    /**
+     * Actual word index.
+     */
     private int wordIndex;
+    /**
+     * The indexes of words from actual word list that has been used.
+     */
+    private boolean[] wordListIndexesUsed;
+    /**
+     * Actual word characters as char array.
+     */
     private char[] wordCharacters;
+    /**
+     * Actual word category.
+     */
+    private String wordCategory;
+    /**
+     * The character indexes of actual word that can be used to show word.
+     */
     private ArrayList<Integer> wordCharacterIndexes;
+   
     private boolean guessedLetter = false;
 
+    /**
+     * Sets the indox to a random value.
+     */
+    public void setRandomIndex(){
+        int randomIndex=0;
+        
+        wordListIndexesUsed[wordIndex] = true;
+        Random rand = new Random();
+        
+        randomIndex = rand.nextInt(wordList.getAmount()-1);
+        
+        while(wordListIndexesUsed[randomIndex] == true){
+            randomIndex = rand.nextInt(wordList.getAmount()-1);
+        }
+        
+        setWordIndex(randomIndex);
+    }
     // <editor-fold defaultstate="collapsed" desc="Getters Setters">
+    /**
+     * Sets the word index to the specified value.
+     * @param wordIndex The value to be est as word index.
+     */
     public void setWordIndex(int wordIndex) {
         this.wordIndex = wordIndex;
     }
-        
+    /**
+     * Checks whether the letter has been guessed.
+     * @return True if the letter was guessed.
+     */
     public boolean isGuessedLetter() {
         return guessedLetter;
     }
 
+    /**
+     * Sets the letter to guessed (or not).
+     * @param guessedLetter Set to true if guessed, false otherwise.
+     */
     public void setGuessedLetter(boolean guessedLetter) {
         this.guessedLetter = guessedLetter;
     }
 
+    /**
+     * Gets the actual used word list.
+     * @return The word list as WordList object.
+     */
     public WordList getWordList() {
         return wordList;
     }
 
+    /**
+     * Gets the actual word index.
+     * @return The actual word index as integer.
+     */
     public int getWordIndex() {
         return wordIndex;
     }
 
+    /**
+     * Gets the word character char array.
+     * @return Word characters char array.
+     */
     public char[] getWordCharacters() {
         return wordCharacters;
     }
 
+    /**
+     * Gets the list of a word character indexes that can be used to show word.
+     * @return Word character indexes as ArrayList of Integers.
+     */
     public ArrayList<Integer> getWordCharacterIndexes() {
         return wordCharacterIndexes;
     }
     
     // </editor-fold>
     
-    public GameWordLogic(){
+    /**
+     * Constructs a new game world object and initializes all variables.
+     * @param wordCategory The category of words.
+     */
+    public GameWordLogic(String wordCategory){
+        this.wordCategory = wordCategory;
         initializeWordEngine();
         wordToChar(wordList, wordIndex);
-    }
-
-    private Word[] fetchWords() {
-        // TO-DO Połączenie z bazą danych i kopiowanie słów
-
-        // TO-DO Obliczenia wymagające wyboru X-ilości wyrazów (użycie Random)
-        // Zwrócenie 
-        Word[] wyrazy = {new Word("Aaa")};
-        return wyrazy;
     }
 
      /**
@@ -74,13 +132,17 @@ public class GameWordLogic {
         wordIndex = 0;
         wordCharacterIndexes = new ArrayList<>();
 
+        Word[] words;
         // Fetch words
-        Word[] aWord = {new Word("Kaczka"), new Word("Romek"), new Word("Jasnek"), new Word("Marek"),
-            new Word("Dziwaczka"), new Word("Franek"), new Word("Tomasz"), new Word("Janusz"),
-            new Word("Word"), new Word("Kaszanka")}; // TO SUBSTITUTE
-        wordIndex = 0; // TO SUBSTITUTE
-
-        setupWords(aWord); // To-Do usunąć, gdy już będzie podpięta baza
+        if(wordCategory.equalsIgnoreCase("Wszystko"))
+            words = DBFetch.fetchWords();
+        else
+            words = DBFetch.fetchWords(wordCategory);
+        
+        setupWords(words); 
+        wordListIndexesUsed = new boolean[wordList.getAmount()];
+        System.out.println(wordList);
+        setRandomIndex();
     }
 
     /**
@@ -89,6 +151,7 @@ public class GameWordLogic {
      */
     private void setupWords(Word... words) {
         wordList = new WordList();
+        wordList.setWordCategoryName("Imiona");
         wordList.addWords(words);
     }
     

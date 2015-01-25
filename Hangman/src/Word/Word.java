@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Word;
 
 /**
  * Word class represents a word that can be guessed throughout the game.
- * @author P
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class Word {
     /**
@@ -25,6 +20,10 @@ public class Word {
      */
     private boolean guessed;
 
+    /**
+     * Constructs a new Word object provided a text it should contain.
+     * @param value The text that is a word.
+     */
     public Word(String value){
         setWord(value);
         guessed = false;
@@ -32,8 +31,8 @@ public class Word {
     }
     
     /**
-     * Looks for a specified letter in a word and notes found ones.
-     * @param letter A letter that's used for checking.
+     * Looks for a specified letter in a word and marks the found ones.
+     * @param letter A letter that's being checked.
      * @return True if the guessed letter was in the word, false otherwise.
      */
      public boolean checkLetter(char letter){
@@ -61,6 +60,22 @@ public class Word {
          }
          return this.guessed = true;
      }
+    
+     /**
+      * The word and it's guessed indexes.
+      * @return String representation of Word object.
+      */
+    @Override
+    public String toString(){
+        String text = getWord() + "\n";
+        for(int i = 0; i < this.guessedIndexes.length ; i++){
+            text += i + ": " + guessedIndexes[i] + "\n";
+        }
+        return text;
+    }
+    
+     //<editor-fold defaultstate="collapsed" desc="Getters Setters">
+     
      
      /**
       * Sets trimmed word variable to a given value
@@ -86,14 +101,6 @@ public class Word {
     public boolean isGuessed(){
         return this.guessed;
     }
-    
-    @Override
-    public String toString(){
-        String text = getWord() + "\n";
-        for(int i = 0; i < this.guessedIndexes.length ; i++){
-            text += i + ": " + guessedIndexes[i] + "\n";
-        }
-        return text;
-    }
+    //</editor-fold>
      
 }

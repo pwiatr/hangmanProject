@@ -3,9 +3,23 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/hangman/GUI/GameAreaPanel.java</file>
-            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/hangman/Engine/GameLogic.java</file>
-            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/hangman/GUI/GamePreAreaPanel.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Database/DBInsert.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Word/Word.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GUI/GamePreAreaPanel.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GUI/GameScoresPanel.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Word/WordList.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Database/DBFetch.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GameType/GameTypeBig.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Engine/GameWordLogic.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Engine/GameLogic.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Database/DBConnect.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GUI/GameAreaPanel.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GUI/GameMainMenuPanel.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GameType/GameTypePvp.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GameType/GameType.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GameType/GameTypeSingle.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/GameDifficulty/GameDifficulty.java</file>
+            <file>file:/C:/Users/P/Documents/NetBeansProjects/hangmanProject/Hangman/src/Engine/Player.java</file>
         </group>
     </open-files>
 </project-private>

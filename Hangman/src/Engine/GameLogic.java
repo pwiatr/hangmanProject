@@ -3,32 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hangman.Engine;
+package Engine;
 
+import Database.DBInsert;
 import Word.WordList;
 import Word.Word;
 import GameDifficulty.GameDifficulty;
 import GameType.GameType;
-import static hangman.Engine.GameLogic.GameStatus.*;
+import static Engine.GameLogic.GameStatus.*;
 import java.util.ArrayList;
 import javax.swing.JButton;
 
 /**
- *
- * @author P
+ * This class takes care of fundamental game logic.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class GameLogic {
 
+    /**
+     * Enumeration with status that represents the situation in game.
+     */
     public enum GameStatus {
 
         /**
          * Wrong guess, mark an error.
          */
         WORSEN,
-        /**
-         * Totally reset the game (guess counter, points, eveyrhting).
-         */
-        RESET,
         /**
          * Lost game - the word has not been guessed.
          */
@@ -50,6 +50,10 @@ public class GameLogic {
          */
         DRAW,
         /**
+         * Totally reset the game (guess counter, points, eveyrhting).
+         */
+        RESET,
+        /**
          * Nothing happens or the letter has been guessed.
          */
         NONE
@@ -60,36 +64,72 @@ public class GameLogic {
      */
     private int hangmanStep = 0;
 
+    /**
+     * Indicates whetver a word has not been guessed.
+     */
     private boolean failedAWord = false;
 
     /**
      * Enumeration variable with the actual game situation.
      */
     private GameStatus hangmanStatus;
+    /**
+     * The actual game difficulty object.
+     */
     private GameDifficulty gameDifficulty;
+    /**
+     * The actual type of the game object.
+     */
     private GameType gameType;
+    /**
+     * The actual logic that takes care of words.
+     */
     private final GameWordLogic gameWordLogic;
-   
+
+
+   /**
+    * The amount of words that has been taken care of in a single game.
+    */
     private int gameWordsDone = 0;
+    /**
+     * The amount of guessed words in a single game.
+     */
     private int gameWordsGuessed = 0;
 
+    /**
+     * In-game players.
+     */
     private Player[] players;
+    /**
+     * Indicates which player is about to guess (essential in PVP game).
+     */
     public int whichPlayer = 0;
     
-    public GameLogic(GameType gType, GameDifficulty gDiff, Player[] gPlayers) {
+    /**
+     * Constructs a new game logic object.
+     * @param gType The type of the game.
+     * @param gDiff The difficulty of the game.
+     * @param gPlayers The in-game players.
+     * @param gameCategory The category of the game.
+     */
+    public GameLogic(GameType gType, GameDifficulty gDiff, 
+            Player[] gPlayers, String gameCategory) {
         setType(gType);
         setDifficulty(gDiff);
         setPlayers(gPlayers);
         
-        gameWordLogic = new GameWordLogic();
+        gameWordLogic = new GameWordLogic(gameCategory);
         
         System.out.println(toString());
     }
 
-    public void NewGame(/*Word ... words */) {
+    /**
+     * This method resets important stuff to get a new game going.
+     */
+    public void NewGame() {
         hangmanStatus = GameStatus.NONE;
         hangmanStep = 0;
-
+        
         failedAWord = false;
 
         gameWordsDone = 0;
@@ -116,21 +156,23 @@ public class GameLogic {
                     changeGameStatus(GUESS);
                     gameWordsGuessed += 1;
                     gameWordsDone += 1;
-                    gameWordLogic.setWordIndex(gameWordLogic.getWordIndex()+1);
+                    gameWordLogic.setRandomIndex();
                     isGameFinished();
                 } else if (gameWordLogic.isGuessedLetter() == false) {
                     if (hangmanStep > 11) { // Too much errors - fail!
                         changeGameStatus(FAIL);
                         gameWordsDone += 1;
+                        gameWordLogic.setRandomIndex();
                         failedAWord = true;
                         isGameFinished();
                     } else {
                         changeGameStatus(WORSEN);
-
-                        if (hangmanStep > 11) { // Too much errors = fail
+                        
+                        if (hangmanStep >= 11) { // Too much errors = fail
                             changeGameStatus(FAIL);
                             failedAWord = true;
                             gameWordsDone += 1;
+                            gameWordLogic.setRandomIndex();
                             isGameFinished();
                         }
                     }
@@ -163,20 +205,6 @@ public class GameLogic {
                 }
                 break;
             }
-            case "MULTIPLE": {
-                if(gameWordsDone == wordsAmount){
-                    if (gameWordsGuessed == wordsAmount) {
-                        changeGameStatus(WINGAME);
-                        return true;
-                    }
-                }
-                else if (failedAWord) 
-                {
-                    changeGameStatus(LOSEGAME);
-                    return true;
-                }
-                break;
-            }
             case "PVP": {
                 if (gameWordsDone == wordsAmount) {
                     if (players[0].getScore() == players[1].getScore()) {
@@ -192,10 +220,16 @@ public class GameLogic {
             case "BIG": {
                 if (failedAWord) { // Failing means finishing the game
                     changeGameStatus(LOSEGAME);
+                    DBInsert.insertScores(players[0].getName(),
+                            players[0].getScore(),
+                            gameDifficulty);
                     return true;
                 }
                 else if(gameWordsGuessed == wordsAmount) { 
                     changeGameStatus(WINGAME);
+                    DBInsert.insertScores(players[0].getName(),
+                            players[0].getScore(),
+                            gameDifficulty);
                     return true;
                 }
                 break;
@@ -252,22 +286,45 @@ public class GameLogic {
 
     
     // <editor-fold defaultstate="collapsed" desc="Getters">
+    /**
+     * Returns GameType object reference.
+     * @return GameType reference.
+     */
+    public GameType getGameType() {
+        return gameType;
+    }
+    /**
+     * Returns the actual step in the game.
+     * @return Actual step.
+     */
     public int getHangmanStep() {
         return hangmanStep;
     }
-
+    /**
+     * Returns GameStatus object reference.
+     * @return GameStatus object.
+     */
     public GameStatus getHangmanStatus() {
         return hangmanStatus;
     }
-    
+    /**
+     * Returns the actual players array.
+     * @return Player objects array.
+     */
     public Player[] getPlayers() {
         return players;
     }
-        
+    /**
+     * Returns the actual hangman status.
+     * @return Hangman status as GameStatus object.
+     */
     public GameStatus getGameStatus() {
         return this.hangmanStatus;
     }
-    
+    /**
+     * Returns GameWordLogic object reference.
+     * @return GameWordLogic object.
+     */
      public GameWordLogic getWordLogicEngine(){
         return this.gameWordLogic;
     }

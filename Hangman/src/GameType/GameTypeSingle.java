@@ -6,11 +6,15 @@
 package GameType;
 
 /**
- *
- * @author P
+ * Single game type.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class GameTypeSingle extends GameType{
 
+    /**
+     * Constructs a new single type game with set player amount, word amount
+     * and name.
+     */
     public GameTypeSingle() {
         super(1,1,"SINGLE");
     }

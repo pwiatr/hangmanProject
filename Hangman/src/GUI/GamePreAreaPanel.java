@@ -1,52 +1,49 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package hangman.GUI;
+package GUI;
 
+import Database.DBFetch;
 import GameType.*;
 import GameDifficulty.*;
-import hangman.Engine.GameLogic;
-
-import hangman.Engine.Player;
-import hangman.GUI.GameAreaPanel;
+import Engine.Player;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
-import javax.swing.JRadioButton;
-import javax.swing.JSlider;
+import javax.swing.JRadioButton; 
 import javax.swing.SwingUtilities;
 
 /**
- * @author P
+ * The panel that contains some settings before starting the game.
+ * @author Jakub Włodarz i Przemysław Pędziwiatr.
  */
 public class GamePreAreaPanel extends javax.swing.JPanel {
 
     /**
-     * Creates new form GamePreAreaPanel
+     * Constucts a new gane area panel.
      */
     public GamePreAreaPanel() {
         initComponents();
         setBackground(Color.WHITE);
 
-        // TO-DO Dodać kategorie gier pobrane z bazy
-        categoryCombo.addItem(makeObj("Rzeczy"));
-        categoryCombo.addItem(makeObj("Kuchnia"));
-        categoryCombo.addItem(makeObj("Zwierzęta"));
 
+        String[] categories = DBFetch.fetchCategories();
+        for(String cat: categories){
+            categoryCombo.addItem(makeObj(cat));
+        }
+        categoryCombo.addItem(makeObj("Wszystko"));
+        
+        
         player2Label.setVisible(false);
         playerName2.setVisible(false);
 
         typeSingleRadio.addItemListener(new VoteItemListener());
-        typeMultipleRadio.addItemListener(new VoteItemListener());
+        typeBigRadio.addItemListener(new VoteItemListener());
         typePvpRadio.addItemListener(new VoteItemListener());
 
     }
 
+    
     /**
      * ItemListener used for showing input fields (player names) and selecting
      * game type.
@@ -58,12 +55,13 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
             boolean selected = (e.getStateChange() == ItemEvent.SELECTED);
             AbstractButton button = (AbstractButton) e.getItemSelectable();
             if (selected && (button.getActionCommand() == null
-                    ? typePvpRadio.getActionCommand() == null : button.getActionCommand().equals(typePvpRadio.getActionCommand()))) {
-                player1Label.setText("Write 1st player name:");
+                    ? typePvpRadio.getActionCommand() == null : 
+                    button.getActionCommand().equals(typePvpRadio.getActionCommand()))) {
+                player1Label.setText("Wpisz imię pierwszego gracza:");
                 player2Label.setVisible(true);
                 playerName2.setVisible(true);
             } else {
-                player1Label.setText("Write your name:");
+                player1Label.setText("Wpisz swoje imię:");
                 player2Label.setVisible(false);
                 playerName2.setVisible(false);
             }
@@ -72,6 +70,12 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     * Creates a String object used in category ComboBox (with 
+     * overriden toString).
+     * @param item The string to be set.
+     * @return Object contaning the string.
+     */
     private Object makeObj(final String item) {
         return new Object() {
             public String toString() {
@@ -98,7 +102,6 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         typeLabel = new javax.swing.JLabel();
         typeSingleRadio = new javax.swing.JRadioButton();
         typePvpRadio = new javax.swing.JRadioButton();
-        typeMultipleRadio = new javax.swing.JRadioButton();
         categoryLabel = new javax.swing.JLabel();
         categoryCombo = new javax.swing.JComboBox();
         graphicPanel = new javax.swing.JPanel();
@@ -135,9 +138,9 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         );
 
         playButton.setBackground(new java.awt.Color(51, 51, 51));
-        playButton.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        playButton.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
         playButton.setForeground(new java.awt.Color(255, 255, 255));
-        playButton.setText("Play");
+        playButton.setText("Graj!");
         playButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 playButtonActionPerformed(evt);
@@ -154,14 +157,14 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         });
 
         levelLabel.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
-        levelLabel.setText("Choose your difficulty level (chosen: medium).");
+        levelLabel.setText("Wybierz poziom trudności (wybrany: średni).");
 
         typeLabel.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
-        typeLabel.setText("Choose game type.");
+        typeLabel.setText("Wybierz rodzaj gry.");
 
         gameTypeButGroup.add(typeSingleRadio);
         typeSingleRadio.setSelected(true);
-        typeSingleRadio.setText("Single game");
+        typeSingleRadio.setText("Pojedyncza gra");
         typeSingleRadio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 typeSingleRadioMouseEntered(evt);
@@ -169,7 +172,7 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         });
 
         gameTypeButGroup.add(typePvpRadio);
-        typePvpRadio.setText("Player VS Player");
+        typePvpRadio.setText("Gracz vs Gracz");
         typePvpRadio.setToolTipText("");
         typePvpRadio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -177,16 +180,8 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
             }
         });
 
-        gameTypeButGroup.add(typeMultipleRadio);
-        typeMultipleRadio.setText("Multiple levels");
-        typeMultipleRadio.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                typeMultipleRadioMouseEntered(evt);
-            }
-        });
-
         categoryLabel.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
-        categoryLabel.setText("Choose word category.");
+        categoryLabel.setText("Wybierz kategorię wyrazów:");
 
         graphicIcLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Resources/BCKG.jpg"))); // NOI18N
         graphicIcLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 4));
@@ -205,17 +200,17 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         );
 
         player1Label.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
-        player1Label.setText("Write your name:");
+        player1Label.setText("Wpisz swoje imię:");
 
         player2Label.setFont(new java.awt.Font("Microsoft YaHei", 0, 14)); // NOI18N
-        player2Label.setText("Write 2nd player name:");
+        player2Label.setText("Wpisz imię drugiego gracza:");
 
-        playerName1.setText("Hang On!");
+        playerName1.setText("Tomek");
 
-        playerName2.setText("Hang On!");
+        playerName2.setText("Jarek");
 
         gameTypeButGroup.add(typeBigRadio);
-        typeBigRadio.setText("BIG Game");
+        typeBigRadio.setText("WIELKA gra");
         typeBigRadio.setToolTipText("");
         typeBigRadio.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -243,23 +238,19 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
                                 .addGap(42, 42, 42))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(categoryLabel)
+                                    .addComponent(player1Label)
+                                    .addComponent(player2Label)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(10, 10, 10)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(typePvpRadio)
-                                            .addComponent(typeMultipleRadio)
                                             .addComponent(typeSingleRadio)
-                                            .addComponent(typeBigRadio)))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(categoryLabel)
-                                        .addComponent(player1Label)
-                                        .addComponent(player2Label)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addGap(10, 10, 10)
+                                            .addComponent(typeBigRadio)
                                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                 .addComponent(categoryCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(playerName1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addComponent(playerName2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(playerName1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(playerName2, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(playButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -286,12 +277,10 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(typeSingleRadio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(typeMultipleRadio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(typePvpRadio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(typeBigRadio)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(typePvpRadio)
+                        .addGap(18, 18, 18)
                         .addComponent(categoryLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(categoryCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -312,11 +301,12 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
 
-                GameType gameType = setGameType();
-                GameDifficulty gameDiff = setGameDifficulty();
+                String gameCategory = categoryCombo.getSelectedItem().toString();
+                GameType gameType = setGameType(gameCategory);
                 Player gamePlayers[] = setPlayers(gameType);
+                GameDifficulty gameDiff = setGameDifficulty();
                 
-                GameAreaPanel GAP = new GameAreaPanel(gameType, gameDiff, gamePlayers);
+                GameAreaPanel GAP = new GameAreaPanel(gameType, gameDiff, gamePlayers, gameCategory);
                 JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(GamePreAreaPanel.this);
                 topFrame.getContentPane().removeAll();
                 topFrame.add(GAP);
@@ -331,29 +321,27 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
      * Sets the game type.
      * @return GameType object containg the game type.
      */
-    private GameType setGameType() {
+    private GameType setGameType(String gameCategory) {
         Enumeration<AbstractButton> jButtons = gameTypeButGroup.getElements();
         while (jButtons.hasMoreElements()) {
             JRadioButton jRB = (JRadioButton) jButtons.nextElement();
             if (jRB.isSelected()) {
                 switch (jRB.getActionCommand()) {
-                    case "Single game": {
+                    case "Pojedyncza gra": {
                         return new GameTypeSingle();
                     }
-                    case "Multiple levels": {
-                        return new GameTypeMultiple();
+                    case "WIELKA gra": {
+                        return new GameTypeBig(gameCategory);
                     }
-                    case "Player VS Player": {
+                    case "Gracz vs Gracz": {
                         return new GameTypePvp();
-
                     }
-                    case "BIG Game": {
-                        return new GameTypeBig();
-                    }
+                    
                 }
                 break;
             }
         }
+        
         return null;
     }
 
@@ -402,36 +390,32 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
         String labelLevel;
         switch (levelSlider.getValue()) {
             case 0: {
-                labelLevel= "easy"; break;
+                labelLevel= "łatwy"; break;
             }
             case 1: {
-                labelLevel= "medium"; break;
+                labelLevel= "średni"; break;
             }
             case 2: {
-                labelLevel = "hard"; break;
+                labelLevel = "trudny"; break;
             }
             default: {
-                labelLevel = "medium"; break;
+                labelLevel = "średni"; break;
             }
         }
-        levelLabel.setText("Choose your difficulty level (chosen: " + labelLevel + ").");
+        levelLabel.setText("Wybierz poziom trudności (wybrany: " + labelLevel + ").");
     }//GEN-LAST:event_levelSliderStateChanged
 
     // <editor-fold defaultstate="collapsed" desc="ToolTips">
     private void typeSingleRadioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_typeSingleRadioMouseEntered
-        statusBarText.setText("A single game - only one Hangman to solve.");
+        statusBarText.setText("Pojedyncza gra - wystarczy rozwiązać jedną zagadkę.");
     }//GEN-LAST:event_typeSingleRadioMouseEntered
 
-    private void typeMultipleRadioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_typeMultipleRadioMouseEntered
-        statusBarText.setText("A multiple level game - you have to solve multiple Hangmans to win.");
-    }//GEN-LAST:event_typeMultipleRadioMouseEntered
-
     private void typePvpRadioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_typePvpRadioMouseEntered
-        statusBarText.setText("Player versus player - you play with your friend taking turns after every hagnman.");
+        statusBarText.setText("Gracz vs gracz - możesz zmierzyć się z przeciwnikiem grając na zmianę.");
     }//GEN-LAST:event_typePvpRadioMouseEntered
 
     private void typeBigRadioMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_typeBigRadioMouseEntered
-        statusBarText.setText("BIG game - try to guess as much hangmans as possible. Play well and you will achieve a highscore.");
+        statusBarText.setText("WIELKA gra - spróbuj odgadnąć jak najwięcej wyrazów z gry. Najlepsze wyniki zostaną zapisane.");
     }//GEN-LAST:event_typeBigRadioMouseEntered
     // </editor-fold>
 
@@ -453,7 +437,6 @@ public class GamePreAreaPanel extends javax.swing.JPanel {
     private javax.swing.JLabel statusBarText;
     private javax.swing.JRadioButton typeBigRadio;
     private javax.swing.JLabel typeLabel;
-    private javax.swing.JRadioButton typeMultipleRadio;
     private javax.swing.JRadioButton typePvpRadio;
     private javax.swing.JRadioButton typeSingleRadio;
     // End of variables declaration//GEN-END:variables

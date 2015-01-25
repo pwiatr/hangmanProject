@@ -1,102 +1,135 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Word;
+
 import java.util.ArrayList;
 
 /**
  * A customized container for Word objects.
- * @author P
+ *
+ * @author Jakub Włodarz i Przemysław Pędziwiatr
  */
 public class WordList {
+
     /**
      * An ArrayList containing Word objects.
      */
-    private ArrayList<Word> words;
+    private final ArrayList<Word> words;
     /**
      * The amount of words in a WordList.
      */
-    private int wordsAmount;
-    
-    public WordList(){
+    private int wordsAmount = 0;
+    /**
+     * The name of a category that words belong to.
+     */
+    private String wordCategoryName;
+
+    /**
+     * Constructs a new word list.
+     */
+    public WordList() {
         this.words = new ArrayList();
-        
-        wordsAmount = 0;
     }
-    
+
     /**
      * Adds a single/many Word object(s) to a WordList object.
+     *
      * @param aWords One/multiple Word objects.
-     * @return True if added any word, false otherwise.
+     * @return True if added all words, false otherwise.
      */
-    public boolean addWords(Word... aWords){
+    public boolean addWords(Word... aWords) {
         boolean added = false;
-        for(Word aWord : aWords){
+        for (Word aWord : aWords) {
             this.words.add(aWord);
             this.wordsAmount++;
             added = true;
         }
         return added;
     }
+
+      //<editor-fold defaultstate="collapsed" desc="Getters Setters">
     
     /**
      * Checks the amount of guessed words.
+     *
      * @return Integer number of guessed words amount.
      */
-    public int checkGuessedAmount(){
+    public int getGuessedAmount() {
         int guessed = 0;
-        
-        for(Word aWord: words){
-            if(aWord.isGuessed())
+
+        for (Word aWord : words) {
+            if (aWord.isGuessed()) {
                 guessed++;
+            }
         }
-        
+
         return guessed;
     }
-    
+
     /**
-     * The amount of words in a WordList.
-     * @return Integer number of words in WordList.
-     */
-    public int getAmount(){
-        return this.wordsAmount;
-    }
-    
-     /**
      * Gets a word on specified index.
+     *
      * @param index The index of a word on a list.
      * @return Particular word as Word object, otherwise null.
      */
-    public Word getWord(int index){
-        if(index<this.wordsAmount){
+    public Word getWord(int index) {
+        if (index < this.wordsAmount) {
             return words.get(index);
-        }
-        else {
+        } else {
             // There isn't a word with such index
             return null;
         }
     }
-    
+
     /**
      * Gets a word name at specified index.
+     *
      * @param index The index of a word on a list.
      * @return String representation of a word name, otherwise null.
      */
-    public String getWordName(int index){
-        if(index<this.wordsAmount){
+    public String getWordName(int index) {
+        if (index < this.wordsAmount) {
             return words.get(index).getWord();
-        }
-        else {
+        } else {
             // There isn't a word with such index
             return null;
         }
     }
+
+    /**
+     * Returns the string representation of category.
+     *
+     * @return String category name.
+     */
+    public String getWordCategoryName() {
+        return wordCategoryName;
+    }
+
+    /**
+     * Sets the word category name.
+     *
+     * @param wordCategoryName The name the category will be set to.
+     */
+    public void setWordCategoryName(String wordCategoryName) {
+        this.wordCategoryName = wordCategoryName;
+    }
+
+    /**
+     * The amount of words in a WordList.
+     *
+     * @return Integer number of words in WordList.
+     */
+    public int getAmount() {
+        return this.wordsAmount;
+    }
     
-   
     
-    
-    
-    
+    //</editor-fold>
+
+    /**
+     * Prints all the in game words.
+     * @return In game words.
+     */
+    @Override
+    public String toString() {
+        return "WordList{" + "words=" + words + '}';
+    }
 }

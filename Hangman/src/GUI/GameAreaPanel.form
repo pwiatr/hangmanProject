@@ -57,7 +57,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jButton1" min="-2" pref="110" max="-2" attributes="0"/>
+                  <Component id="returnButton" min="-2" pref="305" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="scoreP1Label" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -72,7 +72,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton1" max="32767" attributes="0"/>
+                      <Component id="returnButton" max="32767" attributes="0"/>
                       <Group type="102" attributes="0">
                           <Component id="scoreP1Label" min="-2" max="-2" attributes="0"/>
                           <EmptySpace pref="16" max="32767" attributes="0"/>
@@ -85,7 +85,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="returnButton">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="33" green="33" red="33" type="rgb"/>
@@ -96,7 +96,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Back to menu"/>
+            <Property name="text" type="java.lang.String" value="Powr&#xf3;t do menu"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
@@ -105,8 +105,8 @@
             <Property name="doubleBuffered" type="boolean" value="true"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton1MouseEntered"/>
-            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton1MousePressed"/>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="returnButtonMouseEntered"/>
+            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="returnButtonMousePressed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="scoreP1Label">
@@ -114,7 +114,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Microsoft YaHei" size="18" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Score - player 1 (0)"/>
+            <Property name="text" type="java.lang.String" value="Wynik - gracz 1 (0)"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
           <Events>
@@ -126,12 +126,9 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Microsoft YaHei" size="18" style="0"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Score - player 2 (0)"/>
+            <Property name="text" type="java.lang.String" value="Wynik - gracz 2 (0)"/>
             <Property name="toolTipText" type="java.lang.String" value=""/>
           </Properties>
-          <Events>
-            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="scoreP2LabelMouseEntered"/>
-          </Events>
         </Component>
       </SubComponents>
     </Container>
