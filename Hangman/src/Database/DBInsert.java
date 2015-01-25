@@ -22,7 +22,12 @@ public class DBInsert extends DBConnect{
       */
      private static String errMessage = "Problem połączenia z bazą.";
     
-    
+    /**
+     * Inserts the scores into the database.
+     * @param playerName Player name to insert.
+     * @param points Player points to insert. 
+     * @param gameDiff The difficulty of the game.
+     */
     public static void insertScores(String playerName, int points, 
             GameDifficulty gameDiff){
         try {
@@ -50,17 +55,14 @@ public class DBInsert extends DBConnect{
                     break;
                 }
             }
-            // INSERT INTO `HScores`(`HPoints`, `HName`) VALUES ('10','Jarek')
-            
-            System.out.println(whichTable + wherePoints + whereName);
-//            String insert = "INSERT INTO `HScores`(`HPoints`, `HName`) VALUES ('10','Jarek')";
-            //                 INSERT INTO 'HScores'('HPoints','HName') VALUES ('1','Jarek')
-                            // INSERT INTO `HScores`(`HPoints`,`HName`) VALUES (`0`,`Tomek`)
-                String insert="INSERT INTO " 
-                        + "\""+whichTable+"\"(\""+wherePoints+"\", \""+whereName+"\") "
+
+            String insert = "INSERT INTO `"+whichTable
+                    +"`(`"+wherePoints+"`,`"+whereName+"`) "
                     + "VALUES ("+points+",\""+playerName+"\")";
-            PreparedStatement stmt = conn.prepareStatement(insert);
-            stmt.executeUpdate();
+            System.out.println(insert);
+
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(insert);
             
         }
         catch (Exception e) {

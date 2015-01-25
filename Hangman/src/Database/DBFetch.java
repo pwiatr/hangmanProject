@@ -65,29 +65,34 @@ public class DBFetch extends DBConnect {
     public static String[] fetchNames(FieldType fieldType){
           try{
             String[] points;
+            String letter = "";
             String what = "";
             String from = "";
             switch(fieldType){
                 case EASY:
                 {
+                    letter = "E";
                     what = "EName";
                     from = "Scores";
                     break;
                 }
                 case MEDIUM:{
+                    letter = "M";
                     what = "MName";
                     from = "MScores";
                     break;
                 }
                 case HARD:{
+                    letter = "H";
                     what = "HName";
                     from = "HScores";
                     break;
                 }
             }
             
+
             ResultSet rs = getResult("SELECT "+what+" FROM "+from + 
-                    " ORDER BY "+what+" DESC");
+                    " ORDER BY "+letter+"Points DESC");
             
             int amount = 0;
             while(rs.next()){
@@ -97,7 +102,7 @@ public class DBFetch extends DBConnect {
             points = new String[amount];
             
             rs = getResult("SELECT "+what+" FROM "+from 
-                    + " ORDER BY "+what+" DESC");
+                    + " ORDER BY "+letter+"Points DESC");
             
             
             int iter = 0;
